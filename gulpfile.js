@@ -1,6 +1,5 @@
 var gulp = require('gulp')
   , del = require('del')
-  , react = require('gulp-react')
   , minifyCss = require('gulp-minify-css')
   , uglify = require('gulp-uglify')
   , rename = require('gulp-rename')
@@ -8,8 +7,7 @@ var gulp = require('gulp')
 
 var paths = {
   css: ['./public/stylesheets/*.css'],
-  js: ['./public/javascripts/*.js'],
-  jsx: ['./public/javascripts/react/*.jsx']
+  js: ['./public/javascripts/*.js']
 };
 
 gulp.task('clean', function(done) {
@@ -31,16 +29,10 @@ gulp.task('scripts', ['clean'], function() {
     .pipe(gulp.dest('./public/javscripts/min'));
 });
 
-gulp.task('react', ['clean'], function() {
-  return gulp.src(paths.jsx)
-    .pipe(react())
-    .pipe(gulp.dest('./public/javascripts/react/js'))
-})
 
 gulp.task('watch', function() {
     gulp.watch(paths.js, ['scripts']);
     gulp.watch(paths.css, ['minify-css']);
-    gulp.watch(paths.jsx, ['react'])
 });
 
-gulp.task('default', ['watch', 'minify-css', 'scripts', 'react']);
+gulp.task('default', ['watch', 'minify-css', 'scripts']);
