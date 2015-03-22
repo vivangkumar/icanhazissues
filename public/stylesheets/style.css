@@ -28,8 +28,10 @@ a:hover {
   width: 300px;
 }
 
-#repo-search-button {
-  background-color: #eb0752;
+#repo-search-button,#login-button {
+  background-color: transparent;
+  border-color: white;
+  color: white;
 }
 
 #pusher-logo {

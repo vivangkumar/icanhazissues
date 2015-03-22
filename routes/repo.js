@@ -2,16 +2,18 @@ var express = require('express');
 var router = express.Router();
 var Request = require('../lib/request');
 
+var config = require('../config.json');
+
 router.get('/', function(req, res, next) {
-  res.render('repos');
-})
+  res.render('repo');
+});
 
 router.get('/search', function(req, res, next) {
   var query = req.query.repo;
   var request = new Request(
-    '/search/repositories?q='+query+'+in:name+user:pusher',
+    '/search/repositories?q='+query+'+in:name+user:' + config.githubUser,
     'GET',
-    {'Authorization': 'token ' + req.signedCookies.access_token}
+    {'Authorization': 'token ' + req.signedCookies.accessToken}
   );
 
   request.do(function(error, response, body) {

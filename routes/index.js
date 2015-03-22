@@ -28,7 +28,7 @@ var authUrl = auth.getAuthorizeUrl({
  * @returns boolean
  */
 function isAuthenticated(req) {
-  if (req.signedCookies.access_token) {
+  if (req.signedCookies.accessToken) {
     return true;
   }
   return false;
@@ -37,7 +37,7 @@ function isAuthenticated(req) {
 /* Home page */
 router.get('/', function(req, res, next) {
   if (!isAuthenticated(req)) {
-    res.redirect(authUrl);
+    res.render('index', {authUrl: authUrl});
   } else {
     res.redirect('/repos');
   }
@@ -59,7 +59,7 @@ router.get('/login', function(req, res, next) {
         res.status(401).send(JSON.stringify(results));
       } else {
         res.cookie(
-          'access_token',
+          'accessToken',
           accessToken,
           {
             maxAge: 2592000000,
@@ -74,7 +74,7 @@ router.get('/login', function(req, res, next) {
 /* Logout and destroy the session */
 router.get('/logout', function(req, res, next) {
   req.session.destroy(function() {
-    res.clearCookie('access_token');
+    res.clearCookie('accessToken');
     res.render('logout');
   });
 })
