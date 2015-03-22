@@ -2,25 +2,28 @@ var express = require('express');
 var router = express.Router();
 var Request = require('../lib/request');
 
-/* GET repos listing. */
 router.get('/', function(req, res, next) {
-  var req = new Request(
-    '/orgs/pusher/repos',
+  res.render('repos');
+})
+
+router.get('/search', function(req, res, next) {
+  var query = req.query.repo;
+  var request = new Request(
+    '/search/repositories?q='+query+'+in:name+user:pusher',
     'GET',
     {'Authorization': 'token ' + req.signedCookies.access_token}
   );
 
-  req.do(function(error, response, body) {
+  request.do(function(error, response, body) {
     if (error) {
       res.status(500).send(JSON.stringify({"error": error}))
     }
 
     if (response.statusCode == 200) {
       var repoNames = [];
-      var repoJSON = JSON.parse(body);
-
-      for(repo in repoJSON) {
-        repoNames.push(repoJSON[repo].name)
+      var parsedRepos = JSON.parse(body).items;
+      for(var i = 0; i < parsedRepos.length; i++) {
+        repoNames.push(parsedRepos[i].name);
       }
       res.render('repos', {repoNames: repoNames});
     } else {

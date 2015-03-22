@@ -25,7 +25,7 @@ var authUrl = auth.getAuthorizeUrl({
 /**
  * Check if an access token has already been issued.
  * @param req
- @ @returns boolean
+ * @returns boolean
  */
 function isAuthenticated(req) {
   if (req.signedCookies.access_token) {
