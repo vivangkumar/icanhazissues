@@ -25,7 +25,7 @@ router.get('/search', function(req, res, next) {
       for(var i = 0; i < parsedRepos.length; i++) {
         repoNames.push(parsedRepos[i].name);
       }
-      res.render('repos', {repoNames: repoNames});
+      res.render('repo', {repoNames: repoNames});
     } else {
       res.status(response.statusCode).send(body);
     }

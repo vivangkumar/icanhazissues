@@ -39,7 +39,7 @@ router.get('/', function(req, res, next) {
   if (!isAuthenticated(req)) {
     res.redirect(authUrl);
   } else {
-    res.render('index', {boardColumns: config.boardColumns});
+    res.redirect('/repos');
   }
 });
 
