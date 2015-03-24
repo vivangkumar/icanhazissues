@@ -26,7 +26,7 @@ gulp.task('scripts', ['clean'], function() {
     .pipe(gulp.dest('./public/javascripts/min'))
     .pipe(rename('bundle.min.js'))
     .pipe(uglify())
-    .pipe(gulp.dest('./public/javscripts/min'));
+    .pipe(gulp.dest('./public/javascripts/min'));
 });
 
 

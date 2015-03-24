@@ -3,10 +3,33 @@ var router = express.Router();
 var Request = require('../lib/request');
 var config = require('../config.json');
 
+/**
+ * Categorize issues based on column names.
+ * @param issues
+ * @return Object
+ */
+function categorizeIssues(issues) {
+  var categorizedIssues =  {};
+  for (cat in config.boardColumns) {
+    categorizedIssues[config.boardColumns[cat]] = [];
+  }
+
+  for(var i = 0; i < issues.length; i++) {
+    for(cat in config.boardColumns) {
+      if (issues[i].label.name == config.boardColumns[cat]) {
+        categorizedIssues[config.boardColumns[cat]].push(issues[i]);
+      }
+    }
+  }
+
+  return categorizedIssues;
+}
+
 router.get('/:repo', function(req, res, next) {
   var repoName = req.params.repo;
+
   var request = new Request(
-    '/repos/'+ config.githubUser + '/'+ repoName + '/issues?state=open',
+    '/repos/'+ config.githubUser + '/'+ repoName + '/issues?state=open&per_page=100',
     'GET',
     {'Authorization': 'token ' + req.signedCookies.accessToken}
   );
@@ -20,18 +43,24 @@ router.get('/:repo', function(req, res, next) {
       var parsedRepos = JSON.parse(body);
       var issueList = [];
       for(var i = 0; i < parsedRepos.length; i++) {
-        var issues = {
-          'title': parsedRepos[i].title,
-          'url': parsedRepos[i].url,
-          'assignee': parsedRepos[i].assignee,
-          'label': parsedRepos[i].labels
+        if(parsedRepos[i].labels.length != 0) {
+          var issues = {
+            'issue_number': parsedRepos[i].number,
+            'title': parsedRepos[i].title,
+            'url': parsedRepos[i].url,
+            'assignee': parsedRepos[i].assignee,
+            'label': parsedRepos[i].labels[0]
+          }
+
+          issueList.push(issues);
         }
-        
-        issueList.push(issues);
       }
+
+      var categorizedIssues = categorizeIssues(issueList);
+
       res.render('board', {
         boardColumns: config.boardColumns,
-        issues: issueList
+        issues: categorizedIssues
       });
     } else {
       res.status(response.statusCode).send(body);
