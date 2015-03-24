@@ -3,9 +3,9 @@ extends board-layout
 block content
   div(class='container-fluid')
     div(class='row heading-row')
-      each col in boardColumns
-        div(class='col-md-3 board-columns' id='#{col}-column')
+      each val, key in issues
+        div(class='col-md-3 board-columns' id='#{key}-column')
           div(class='panel panel-default')
-            div(class='panel-heading') #{col}
+            div(class='panel-heading') #{key}
             div(class='panel-body')
         

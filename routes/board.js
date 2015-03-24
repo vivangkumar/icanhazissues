@@ -59,7 +59,6 @@ router.get('/:repo', function(req, res, next) {
       var categorizedIssues = categorizeIssues(issueList);
 
       res.render('board', {
-        boardColumns: config.boardColumns,
         issues: categorizedIssues
       });
     } else {
