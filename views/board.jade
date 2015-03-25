@@ -7,5 +7,7 @@ block content
         div(class='col-md-3 board-columns' id='#{key}-column')
           div(class='panel panel-default')
             div(class='panel-heading') #{key}
-            div(class='panel-body')
-        
+            div(class='panel-body board-panel-body')
+              ul(class='list-group issue-list-group')
+                each v in val
+                  li(class='list-group-item issue-list-item') #{v.title}

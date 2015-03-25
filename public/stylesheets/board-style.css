@@ -55,3 +55,19 @@ a:hover {
   padding-left:3px;
   padding-right:3px;
 }
+
+.issue-list-group {
+  color: black;
+}
+
+.issue-list-item {
+  height: 80px;
+  margin: 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  text-align: left;
+}
+
+.board-panel-body {
+  padding: 0px;
+}
