@@ -6,11 +6,7 @@ body {
 }
 
 a {
-  color: white;
-}
-
-a:hover {
-  color: #eb0752;
+  color: inherit;
 }
 
 .row-centered {
@@ -61,7 +57,7 @@ a:hover {
 }
 
 .issue-list-item {
-  height: 80px;
+  height: 70px;
   margin: 10px;
   border-radius: 5px;
   font-size: 12px;
@@ -70,4 +66,27 @@ a:hover {
 
 .board-panel-body {
   padding: 0px;
+  background-color: #E2E4E6;
+}
+
+.issue-text {
+  height: 100%;
+  padding-left: 0px;
+}
+
+.issue-assignee {
+  height: 100%;
+  padding-right: 0px;
+}
+
+.board-panel-heading {
+  border-color: #E2E4E6;
+  background-color: #E2E4E6;
+  text-align: left;
+  font-weight: bold;
+}
+
+.panel-default > .panel-heading {
+  border-color: #E2E4E6;
+  background-color: #E2E4E6;
 }

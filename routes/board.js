@@ -47,7 +47,7 @@ router.get('/:repo', function(req, res, next) {
           var issues = {
             'issue_number': parsedRepos[i].number,
             'title': parsedRepos[i].title,
-            'url': parsedRepos[i].url,
+            'url': parsedRepos[i].html_url,
             'assignee': parsedRepos[i].assignee,
             'label': parsedRepos[i].labels[0]
           }

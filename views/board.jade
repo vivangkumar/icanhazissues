@@ -5,9 +5,15 @@ block content
     div(class='row heading-row')
       each val, key in issues
         div(class='col-md-3 board-columns' id='#{key}-column')
-          div(class='panel panel-default')
-            div(class='panel-heading') #{key}
+          div(class='panel board-panel panel-default')
+            div(class='panel-heading board-panel-heading') #{key}
             div(class='panel-body board-panel-body')
               ul(class='list-group issue-list-group')
                 each v in val
-                  li(class='list-group-item issue-list-item') #{v.title}
+                  a(href='#{v.url}')
+                    li(class='list-group-item issue-list-item') 
+                      div(class='issue-text col-xs-10') #{v.title}
+                      div(class='issue-assignee col-xs-2 pull-right')
+                        if v.assignee
+                          span(class='pull-right')
+                            img(src='#{v.assignee.avatar_url}&s=50' class='img-circle')
