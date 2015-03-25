@@ -10,10 +10,11 @@ block content
             div(class='panel-body board-panel-body')
               ul(class='list-group issue-list-group')
                 each v in val
-                  a(href='#{v.url}')
+                  
                     li(class='list-group-item issue-list-item') 
                       div(class='issue-text col-xs-8') #{v.title}
                       div(class='issue-assignee col-xs-4 pull-right')
                         if v.assignee
                           span(class='pull-right')
                             img(src='#{v.assignee.avatar_url}&s=50' class='img-circle avatar')
+                            

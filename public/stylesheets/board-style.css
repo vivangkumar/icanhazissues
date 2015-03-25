@@ -96,3 +96,8 @@ a {
   border: 1px solid;
   border-color: silver;
 }
+
+.sortable-ghost {
+  opacity: 0;
+  background: inherit;
+}

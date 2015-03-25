@@ -17,15 +17,18 @@ gulp.task('clean', function(done) {
 gulp.task('minify-css', ['clean'], function() {
   return gulp.src(paths.css)
     .pipe(minifyCss())
+    .pipe(rename({
+      suffix: '.min'
+    }))
     .pipe(gulp.dest('./public/stylesheets/min'))
 });
 
 gulp.task('scripts', ['clean'], function() {
   return gulp.src(paths.js)
-    .pipe(concat('bundle.js'))
-    .pipe(gulp.dest('./public/javascripts/min'))
-    .pipe(rename('bundle.min.js'))
     .pipe(uglify())
+    .pipe(rename({
+      suffix: '.min'
+    }))
     .pipe(gulp.dest('./public/javascripts/min'));
 });
 
