@@ -4,6 +4,9 @@ for(var i = 0; i < issueList.length; i++) {
     group: 'issues',
     animation: 150,
     dragable: '.issue-list-item',
-    ghostClass: 'sortable-ghost'
+    ghostClass: 'sortable-ghost',
+    onEnd: function(event) {
+      /* Make AJAX call*/
+    }
   });
 }

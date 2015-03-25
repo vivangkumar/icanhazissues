@@ -1,5 +1,4 @@
 body {
-  padding-top: 5px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   background-color: #41A9BD;
   color: white;
@@ -101,4 +100,21 @@ a {
 .sortable-ghost {
   opacity: 0;
   background: inherit;
+}
+
+.board-navbar {
+  background-color: rgba(226, 228, 230, 0.5);
+  opacity: 0.5;
+  border: 0px;
+  border-radius: 0px;
+  min-height: 40px;
+}
+
+.add-issue {
+  margin-right: 0px;
+  margin-top: 3px;
+}
+
+.add-issue-button {
+  border-color: white;
 }

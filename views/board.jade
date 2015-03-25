@@ -10,7 +10,7 @@ block content
             div(class='panel-body board-panel-body')
               ul(class='list-group issue-list-group')
                 each v in val
-                  li(class='list-group-item issue-list-item')
+                  li(class='list-group-item issue-list-item' data-issue-number='#{v.issue_number}' data-label='#{key}')
                     a(href='#{v.url}') 
                       div(class='issue-text col-xs-8') #{v.title}
                     div(class='issue-assignee col-xs-4 pull-right')
