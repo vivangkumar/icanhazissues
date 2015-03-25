@@ -57,11 +57,12 @@ a {
 }
 
 .issue-list-item {
-  height: 70px;
+  min-height: 70px;
   margin: 10px;
   border-radius: 5px;
   font-size: 12px;
   text-align: left;
+  overflow: hidden;
 }
 
 .board-panel-body {
@@ -89,4 +90,9 @@ a {
 .panel-default > .panel-heading {
   border-color: #E2E4E6;
   background-color: #E2E4E6;
+}
+
+.avatar {
+  border: 1px solid;
+  border-color: silver;
 }
