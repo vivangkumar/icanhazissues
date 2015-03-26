@@ -13,7 +13,8 @@ router.get('/search', function(req, res, next) {
   var request = new Request(
     '/search/repositories?q='+query+'+in:name+user:' + config.githubUser,
     'GET',
-    {'Authorization': 'token ' + req.signedCookies.accessToken}
+    {'Authorization': 'token ' + req.signedCookies.accessToken},
+    null
   );
 
   request.do(function(error, response, body) {
