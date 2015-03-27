@@ -60,7 +60,8 @@ router.get('/:repo', function(req, res, next) {
       var categorizedIssues = _categorizeIssues(issueList);
 
       res.render('board', {
-        issues: categorizedIssues
+        issues: categorizedIssues,
+        newIssue: 'https://github.com/' + config.githubUser + '/' + repoName + '/issues/new'
       });
     } else {
       res.status(response.statusCode).send(body);

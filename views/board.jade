@@ -1,6 +1,12 @@
 extends board-layout
 
 block content
+  nav(class='navbar navbar-default board-navbar')
+    div(class='container-fluid')
+      span(class='nav navbar-right add-issue')
+        a(class='btn btn-default add-issue-button' href='#{newIssue}')
+          i(class='fa fa-plus fa-lg')
+            
   div(class='container-fluid')
     div(class='row heading-row')
       each val, key in issues
