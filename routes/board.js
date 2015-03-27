@@ -8,7 +8,7 @@ var config = require('../config.json');
  * @param issues
  * @return Object
  */
-function categorizeIssues(issues) {
+function _categorizeIssues(issues) {
   var categorizedIssues =  {};
   for (cat in config.boardColumns) {
     categorizedIssues[config.boardColumns[cat]] = [];
@@ -57,7 +57,7 @@ router.get('/:repo', function(req, res, next) {
         }
       }
 
-      var categorizedIssues = categorizeIssues(issueList);
+      var categorizedIssues = _categorizeIssues(issueList);
 
       res.render('board', {
         issues: categorizedIssues

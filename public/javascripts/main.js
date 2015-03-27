@@ -34,8 +34,8 @@ function updateIssue(issueNumber, oldLabel, newLabel) {
   var repoName = window.location.pathname.split('/')[2];
   var ISSUE_ENDPOINT = '/issues/' + repoName + '/update/' +issueNumber;
   var data = {
-    "old_label": oldLabel,
-    "new_label": newLabel
+    "oldLabel": oldLabel,
+    "newLabel": newLabel
   }
 
   var request = $.ajax({

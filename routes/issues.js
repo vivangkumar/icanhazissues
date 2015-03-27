@@ -8,7 +8,7 @@ router.post('/:repo/update/:issue', function(req, res, next) {
   var issueNumber = req.params.issue
     , repoName = req.params.repo;
   var body = {
-    'labels': [req.body.new_label]
+    'labels': [req.body.newLabel]
   };
   var request = new Request(
     '/repos/' + config.githubUser + '/' + repoName + '/issues/' + issueNumber,
@@ -24,10 +24,44 @@ router.post('/:repo/update/:issue', function(req, res, next) {
 
     if (response.statusCode == 200) {
       res.status(200).send(JSON.stringify({'message': 'Issue updated'}));
+      var commentData = {
+        'owner': config.githubUser,
+        'repo': repoName,
+        'issueNumber': issueNumber,
+        'accessToken': req.signedCookies.accessToken,
+        'oldLabel': req.body.oldLabel,
+        'newLabel': req.body.newLabel
+      };
+      try {
+        _postIssueComment(commentData);
+      } catch (ex) {
+        console.log(ex);
+      }
     } else {
       res.status(response.statusCode).send(body);
     }
   });
 });
+
+function _postIssueComment(data) {
+  var request = new Request(
+    '/repos/' + data.owner + '/' + data.repo + '/issues/' + data.issueNumber + '/comments',
+    'POST',
+    {'Authorization': 'token ' + data.accessToken},
+    { 'body': 'changed status from ' + data.oldLabel + ' to ' + data.newLabel }
+  );
+
+  request.do(function(error, response, body) {
+    if (error) {
+      throw error;
+    }
+
+    if (response.statusCode == 201) {
+      console.log('Issue comment added.');
+    } else {
+      throw 'Error posting comment. Code: ' + response.statusCode + ' Body: '+ JSON.stringify(body);
+    }
+  });
+}
 
 module.exports = router;
