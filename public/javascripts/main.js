@@ -18,7 +18,9 @@ for(var i = 0; i < issueList.length; i++) {
     onEnd: function(event) {
       var issueNumber = event.item.getAttribute('data-issue-number');
       to = event.item.parentNode.getAttribute('data-label');
-      updateIssue(issueNumber, from, to);
+      if(from != to) {
+        updateIssue(issueNumber, from, to);
+      }
     }
   });
 }

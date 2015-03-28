@@ -43,6 +43,10 @@ router.post('/:repo/update/:issue', function(req, res, next) {
   });
 });
 
+/**
+ * Post a comment on the issue indicating states have changed.
+ * @param data
+ */
 function _postIssueComment(data) {
   var request = new Request(
     '/repos/' + data.owner + '/' + data.repo + '/issues/' + data.issueNumber + '/comments',

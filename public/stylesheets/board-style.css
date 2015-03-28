@@ -1,8 +1,11 @@
+@import url(//fonts.googleapis.com/css?family=Source+Sans+Pro:100,200,300,400);
+
 body {
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  background-color: #41A9BD;
+  font-family: 'Source Sans Pro', sans-serif;
+  background-color: #1E8BC3;
   color: white;
   padding-top: 70px;
+  font-size: medium;
 }
 
 a {
@@ -104,14 +107,14 @@ a {
 }
 
 .board-navbar {
-  background-color: inherit;
+  background-color: #3498DB;
   border: 0px;
   border-radius: 0px;
   min-height: 40px;
 }
 
 .navbar-default {
-  background: inherit;
+  background: #3498DB;
   border-color: inherit;
 }
 
@@ -123,4 +126,32 @@ a {
 .add-issue-button {
   border: 0px;
   background: inherit;
+}
+
+.heading-column {
+  text-align: center;
+  font-weight: 700;
+  width: 20%;
+  float: left;
+  height: 100%;
+  padding-left: 3px;
+  padding-right: 3px;
+  text-transform: capitalize;
+}
+
+.milestone-heading {
+  text-align: left;
+  margin-bottom: 10px;
+  font-weight: 700;
+  background-color: inherit;
+  height: 30px;
+  text-transform: capitalize;
+}
+
+.milestone-heading-text {
+  padding: 5px;
+}
+
+.heading-container {
+  padding-top: 10px;
 }
