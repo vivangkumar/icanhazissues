@@ -13,8 +13,8 @@ var pusher = new Pusher({
 router.post('/auth', function(req, res, next) {
   var socketId = req.body.socket_id;
   var channel = req.body.channel_name;
-  var auth = pusher.authenticate( socketId, channel );
-  res.send( auth );
+  var auth = pusher.authenticate(socketId, channel);
+  res.send(auth);
 });
 
 module.exports = router;
