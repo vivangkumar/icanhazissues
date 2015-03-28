@@ -5,8 +5,8 @@
 var issueGroups = document.getElementsByClassName('issue-list-group');
 var from = ""
   , to = ""
-  , fromGroup = ""
-  , toGroup = "";
+  , fromMilestone = ""
+  , toMilestone = "";
 
 for(var i = 0; i < issueGroups.length; i++) {
   var issueMilestone = issueGroups[i].getAttribute('data-milestone');
@@ -18,15 +18,14 @@ for(var i = 0; i < issueGroups.length; i++) {
     onStart: function(event) {
       var parentNode = event.item.parentNode;
       from = parentNode.getAttribute('data-label');
-      fromGroup = parentNode.getAttribute('data-group');
+      fromGroup = parentNode.getAttribute('data-milestone');
     },
     onEnd: function(event) {
       var issueNumber = event.item.getAttribute('data-issue-number');
       var parentNode = event.item.parentNode;
       to = parentNode.getAttribute('data-label');
-      toGroup = parentNode.getAttribute('data-group');
-
-      if(from != to && fromGroup != toGroup) {
+      toGroup = parentNode.getAttribute('data-milestone');
+      if(from != to && fromMilestone == toMilestone) {
         updateIssue(issueNumber, from, to);
       }
     }
