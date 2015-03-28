@@ -93,7 +93,6 @@ router.get('/:repo', function(req, res, next) {
 
       res.render('board', {
         issues: categorizedIssues,
-        newIssue: 'https://github.com/' + config.githubUser + '/' + repoName + '/issues/new',
         milestones: milestones,
         columns: config.boardColumns
       });
