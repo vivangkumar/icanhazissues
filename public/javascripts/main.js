@@ -2,6 +2,16 @@
  * Main.js
  */
 
+/** PUSHER **/
+var pusher = new Pusher('d861d962297286b85253', {
+ authEndpoint: '/pusher/auth'
+});
+
+var channel = pusher.subscribe('private-issues');
+channel.bind('client-issue-updates', function(data) {
+ console.log(data);
+});
+
 var issueGroups = document.getElementsByClassName('issue-list-group');
 var from = ""
   , to = ""
@@ -26,6 +36,7 @@ for(var i = 0; i < issueGroups.length; i++) {
       to = parentNode.getAttribute('data-label');
       toGroup = parentNode.getAttribute('data-milestone');
       if(from != to && fromMilestone == toMilestone) {
+        channel.trigger('client-issue-updates', 'Card was moved');
         updateIssue(issueNumber, from, to);
       }
     }
