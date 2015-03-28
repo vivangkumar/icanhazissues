@@ -2,23 +2,31 @@
  * Main.js
  */
 
-var issueList = document.getElementsByClassName('issue-list-group');
+var issueGroups = document.getElementsByClassName('issue-list-group');
 var from = ""
-  , to = "";
+  , to = ""
+  , fromGroup = ""
+  , toGroup = "";
 
-for(var i = 0; i < issueList.length; i++) {
-  var sort = Sortable.create(issueList[i], {
-    group: 'issues',
+for(var i = 0; i < issueGroups.length; i++) {
+  var issueMilestone = issueGroups[i].getAttribute('data-milestone');
+  Sortable.create(issueGroups[i], {
+    group: 'issue-' + issueMilestone,
     animation: 150,
     dragable: '.issue-list-item',
     ghostClass: 'sortable-ghost',
     onStart: function(event) {
-      from = event.item.parentNode.getAttribute('data-label');
+      var parentNode = event.item.parentNode;
+      from = parentNode.getAttribute('data-label');
+      fromGroup = parentNode.getAttribute('data-group');
     },
     onEnd: function(event) {
       var issueNumber = event.item.getAttribute('data-issue-number');
-      to = event.item.parentNode.getAttribute('data-label');
-      if(from != to) {
+      var parentNode = event.item.parentNode;
+      to = parentNode.getAttribute('data-label');
+      toGroup = parentNode.getAttribute('data-group');
+
+      if(from != to && fromGroup != toGroup) {
         updateIssue(issueNumber, from, to);
       }
     }

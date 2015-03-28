@@ -3,11 +3,6 @@ extends board-layout
 block content
   nav(class='navbar navbar-default navbar-fixed-top board-navbar')
     div(class='container-fluid heading-container')
-      
-      //span(class='nav navbar-right add-issue')
-      //  a(class='btn btn-default add-issue-button' href='#{newIssue}')
-      //    i(class='fa fa-plus fa-lg')
-      
       each col in columns
         div(class='col-md-3 heading-column') #{col}
             
@@ -21,7 +16,7 @@ block content
             div(class='panel board-panel panel-default')
               div(class='panel-heading board-panel-heading')
               div(class='panel-body board-panel-body')
-                ul(class='list-group issue-list-group' data-label='#{k}')
+                ul(class='list-group issue-list-group' data-label='#{k}' data-milestone='#{key}')
                   each i in v
                     li(class='list-group-item issue-list-item' data-issue-number='#{i.issue_number}')
                       a(href='#{i.url}') 
@@ -31,3 +26,5 @@ block content
                           span(class='pull-right')
                             img(src='#{i.assignee.avatar_url}&s=50' class='img-circle avatar')
                               
+  script.
+    var newIssue = "#{newIssue}"
