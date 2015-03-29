@@ -1,0 +1,11 @@
+{
+  "clientId": "",
+  "clientSecret": "",
+  "githubState": "",
+  "cookieSecret": "",
+  "boardColumns": ["ready", "development", "review", "release", "done"],
+  "githubUser": "",
+  "pusherAppId": "",
+  "pusherKey": "",
+  "pusherSecret": ""
+}

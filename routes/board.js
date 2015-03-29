@@ -94,7 +94,8 @@ router.get('/:repo', function(req, res, next) {
       res.render('board', {
         issues: categorizedIssues,
         milestones: milestones,
-        columns: config.boardColumns
+        columns: config.boardColumns,
+        pusherKey: config.pusherKey
       });
     } else {
       res.status(response.statusCode).send(body);

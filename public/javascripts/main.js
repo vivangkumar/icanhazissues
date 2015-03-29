@@ -3,7 +3,7 @@
  */
 
 /** PUSHER **/
-var pusher = new Pusher('d861d962297286b85253', {
+var pusher = new Pusher(pusherKey, {
  authEndpoint: '/pusher/auth'
 });
 
