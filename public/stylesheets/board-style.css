@@ -2,7 +2,7 @@
 
 body {
   font-family: 'Source Sans Pro', sans-serif;
-  background-color: #1E8BC3;
+  background-color: #41A9BD;
   color: white;
   padding-top: 70px;
   font-size: medium;
@@ -107,14 +107,14 @@ a {
 }
 
 .board-navbar {
-  background-color: #3498DB;
+  background-color: #34495E;
   border: 0px;
   border-radius: 0px;
   min-height: 40px;
 }
 
 .navbar-default {
-  background: #3498DB;
+  background: #34495E;
   border-color: inherit;
 }
 

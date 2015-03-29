@@ -21,4 +21,7 @@ block content
                   div(class='panel-body')
                     |#{repo}
   
-  
+    if error
+      div(class='row row-centered')
+        div(class='col-md-4 col-centered')
+          p=error

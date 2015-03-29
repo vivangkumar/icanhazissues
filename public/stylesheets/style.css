@@ -1,6 +1,8 @@
+@import url(//fonts.googleapis.com/css?family=Source+Sans+Pro:100,200,300,400);
+
 body {
   padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   background-color: #41A9BD;
   color: white;
 }
