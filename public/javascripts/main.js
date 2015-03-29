@@ -116,3 +116,11 @@ function updateIssue(issueNumber, oldLabel, newLabel) {
     }
   });
 }
+
+$(window).load(function() {
+  $('.heading-column:last-child').append(
+    '<a class="add-issue-button pull-right" href="'+newIssueUrl+'">
+      <i class="fa fa-plus fa-lg"></i>
+    </a>'
+  );
+});

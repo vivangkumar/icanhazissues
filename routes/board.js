@@ -95,7 +95,8 @@ router.get('/:repo', function(req, res, next) {
         issues: categorizedIssues,
         milestones: milestones,
         columns: config.boardColumns,
-        pusherKey: config.pusherKey
+        pusherKey: config.pusherKey,
+        newIssueUrl: 'https://github.com/' + config.githubUser + '/' + repoName + '/issues/new'
       });
     } else {
       res.status(response.statusCode).send(body);
