@@ -108,11 +108,9 @@ function updateIssue(issueNumber, oldLabel, newLabel) {
     data: data,
     success: function(msg) {
       console.log(msg);
-      return true;
     },
     error: function(error) {
       console.log('Error: ' + JSON.parse(error));
-      return false;
     }
   });
 }
