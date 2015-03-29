@@ -9,15 +9,20 @@ var pusher = new Pusher(pusherKey, {
 
 var channel = pusher.subscribe('private-issues');
 channel.bind('client-issue-updates', function(data) {
+  // Remove old card before appending new one
   var cardToRemove = '#'+ data.fromLabel + '-' + data.number;
   $(cardToRemove).remove();
+
   var milestoneClass = '.' + data.milestone + '-'+ data.toLabel +'-list-group';
   var assignee = "";
+
+  // Check if we have an assignee image
   if (data.avatarUrl) {
     assignee = '<span class="pull-right">
                   <img src="'+ data.avatarUrl +'" class="img img-circle avatar"></img>
                 </span>';
   }
+
   var cardId = data.toLabel + '-' + data.number;
   var cardHtml = '<li class="list-group-item issue-list-item" data-issue-number="'+ data.number +'" id="'+ cardId +'">
                     <a href="'+ data.url +'">
@@ -28,7 +33,6 @@ channel.bind('client-issue-updates', function(data) {
                     </div>
                   </li>';
   $(milestoneClass).append(cardHtml);
-
 });
 
 var issueGroups = document.getElementsByClassName('issue-list-group');
@@ -39,6 +43,9 @@ var fromLabel = ""
 
 for(var i = 0; i < issueGroups.length; i++) {
   var issueMilestone = issueGroups[i].getAttribute('data-milestone');
+  /* Create sortable instance for each milestone, making them movable only
+   * within each milestone
+   */
   Sortable.create(issueGroups[i], {
     group: 'issue-' + issueMilestone,
     animation: 150,
@@ -55,7 +62,7 @@ for(var i = 0; i < issueGroups.length; i++) {
       toLabel = parentNode.getAttribute('data-label');
       toGroup = parentNode.getAttribute('data-milestone');
       var cardChildren = event.item.children;
-
+      // Card that is to me updated and synced
       var cardMoved = {
         "number": issueNumber,
         "milestone": toGroup,
@@ -65,12 +72,14 @@ for(var i = 0; i < issueGroups.length; i++) {
         "text": cardChildren[0].children[0].innerText
       };
 
+      // Append avatar url if there is one
       if(cardChildren[1].children[0]) {
         cardMoved['avatarUrl'] = cardChildren[1].children[0].children[0].currentSrc;
       }
 
       if(fromLabel != toLabel && fromMilestone == toMilestone) {
         event.item.setAttribute('id', toLabel +'-'+ issueNumber);
+        // Trigger pusher event and update issue on github
         channel.trigger('client-issue-updates', cardMoved);
         updateIssue(issueNumber, fromLabel, toLabel);
       }
