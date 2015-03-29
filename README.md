@@ -7,6 +7,8 @@ We use this at Pusher to triage and track project progress.
 
 This is a rewrite of the [original version](https://github.com/pusher/icanhazissues)
 
+![Kanban board] (https://raw.githubusercontent.com/vivangkumar/icanhazissues/master/images/kanban.png)
+
 ### Running it locally
 
 - Clone the repository
