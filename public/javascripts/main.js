@@ -9,12 +9,31 @@ var pusher = new Pusher('d861d962297286b85253', {
 
 var channel = pusher.subscribe('private-issues');
 channel.bind('client-issue-updates', function(data) {
- console.log(data);
+  var cardToRemove = '#'+ data.fromLabel + '-' + data.number;
+  $(cardToRemove).remove();
+  var milestoneClass = '.' + data.milestone + '-'+ data.toLabel +'-list-group';
+  var assignee = "";
+  if (data.avatarUrl) {
+    assignee = '<span class="pull-right">
+                  <img src="'+ data.avatarUrl +'" class="img img-circle avatar"></img>
+                </span>';
+  }
+  var cardId = data.toLabel + '-' + data.number;
+  var cardHtml = '<li class="list-group-item issue-list-item" data-issue-number="'+ data.number +'" id="'+ cardId +'">
+                    <a href="'+ data.url +'">
+                     <div class="issue-text col-xs-8">'+ data.text +'</div>
+                    </a>
+                    <div class="issue-assignee col-xs-4 pull-right">
+                    '+ assignee +'
+                    </div>
+                  </li>';
+  $(milestoneClass).append(cardHtml);
+
 });
 
 var issueGroups = document.getElementsByClassName('issue-list-group');
-var from = ""
-  , to = ""
+var fromLabel = ""
+  , toLabel = ""
   , fromMilestone = ""
   , toMilestone = "";
 
@@ -27,17 +46,33 @@ for(var i = 0; i < issueGroups.length; i++) {
     ghostClass: 'sortable-ghost',
     onStart: function(event) {
       var parentNode = event.item.parentNode;
-      from = parentNode.getAttribute('data-label');
+      fromLabel = parentNode.getAttribute('data-label');
       fromGroup = parentNode.getAttribute('data-milestone');
     },
     onEnd: function(event) {
       var issueNumber = event.item.getAttribute('data-issue-number');
       var parentNode = event.item.parentNode;
-      to = parentNode.getAttribute('data-label');
+      toLabel = parentNode.getAttribute('data-label');
       toGroup = parentNode.getAttribute('data-milestone');
-      if(from != to && fromMilestone == toMilestone) {
-        channel.trigger('client-issue-updates', 'Card was moved');
-        updateIssue(issueNumber, from, to);
+      var cardChildren = event.item.children;
+
+      var cardMoved = {
+        "number": issueNumber,
+        "milestone": toGroup,
+        "fromLabel": fromLabel,
+        "toLabel": toLabel,
+        "url": cardChildren[0].href,
+        "text": cardChildren[0].children[0].innerText
+      };
+
+      if(cardChildren[1].children[0]) {
+        cardMoved['avatarUrl'] = cardChildren[1].children[0].children[0].currentSrc;
+      }
+
+      if(fromLabel != toLabel && fromMilestone == toMilestone) {
+        event.item.setAttribute('id', toLabel +'-'+ issueNumber);
+        channel.trigger('client-issue-updates', cardMoved);
+        updateIssue(issueNumber, fromLabel, toLabel);
       }
     }
   });
