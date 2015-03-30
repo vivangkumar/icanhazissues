@@ -1,6 +1,6 @@
 {
-  "clientId": "",
-  "clientSecret": "",
+  "githubClientId": "",
+  "githubClientSecret": "",
   "githubState": "",
   "cookieSecret": "",
   "boardColumns": ["ready", "development", "review", "release", "done"],

@@ -18,8 +18,8 @@ This is a rewrite of the [original version](https://github.com/pusher/icanhaziss
 
     ```json
     {
-      "clientId": "your client id",
-      "clientSecret": "your client secret",
+      "githubClientId": "your client id",
+      "githubClientSecret": "your client secret",
       "githubState": "a random string to prevent XSS",
       "cookieSecret": "string to sign the cookies with",
       "boardColumns": ["ready", "development", "review", "release", "done"],

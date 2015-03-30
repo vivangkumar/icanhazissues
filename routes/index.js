@@ -7,8 +7,8 @@ var qs = require('querystring');
 var config = require('../config.json');
 
 var auth = new OAuth(
-  config.clientId,
-  config.clientSecret,
+  config.githubClientId,
+  config.githubClientSecret,
   'https://github.com/',
   'login/oauth/authorize',
   'login/oauth/access_token',
