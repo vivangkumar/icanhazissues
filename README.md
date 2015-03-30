@@ -13,6 +13,10 @@ This is a rewrite of the [original version](https://github.com/pusher/icanhaziss
 
 - Clone the repository
 - Install all node dependencies using `npm install`
+- You'll need to create a new Github application.
+  Call it what ever you want, make sure the callback uri points to your local hostname and port
+  Copy the secret and client ID
+- Create an account with Pusher if you dont have one and copy the credentials
 - Create a `config.json` in the root directory
     This must contain the following fields:
 
@@ -20,8 +24,8 @@ This is a rewrite of the [original version](https://github.com/pusher/icanhaziss
     {
       "githubClientId": "your client id",
       "githubClientSecret": "your client secret",
-      "githubState": "a random string to prevent XSS",
-      "cookieSecret": "string to sign the cookies with",
+      "githubState": "random string to prevent XSS",
+      "cookieSecret": "random string to sign the cookies with",
       "boardColumns": ["ready", "development", "review", "release", "done"],
       "githubUser": "github user name/ org name",
       "pusherAppId": "pusher app id",
