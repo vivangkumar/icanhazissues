@@ -4,7 +4,7 @@ var OAuth = require('oauth').OAuth2;
 var qs = require('querystring');
 
 /* Config file */
-var config = require('../config.json');
+var config = CONFIG;
 
 var auth = new OAuth(
   config.githubClientId,

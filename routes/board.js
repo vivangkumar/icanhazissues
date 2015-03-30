@@ -4,7 +4,7 @@ var Request = require('../lib/request');
 var Ds = require('node-data-structures');
 var Set = Ds.Set;
 
-var config = require('../config.json');
+var config = CONFIG;
 
 /**
  * Categorize issues based on milestones and column names.

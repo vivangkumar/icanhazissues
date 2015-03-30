@@ -6,7 +6,21 @@ var cookieParser = require('cookie-parser');
 var session = require('cookie-session');
 var bodyParser = require('body-parser');
 
-var config = require('./config.json');
+try {
+  CONFIG = require('./config.json');
+} catch (ex) {
+  CONFIG = {
+    "githubClientId": process.env.GITHUB_CLIENT_ID,
+    "githubClientSecret": process.env.GITHUB_CLIENT_SECRET,
+    "githubState": process.env.GITHUB_STATE,
+    "cookieSecret": process.env.COOKIE_SECRET,
+    "boardColumns": ["ready", "development", "review", "release", "done"],
+    "githubUser": process.env.GITHUB_USER,
+    "pusherAppId": process.env.PUSHER_APP_ID,
+    "pusherKey": process.env.PUSHER_KEY,
+    "pusherSecret": process.env.PUSHER_SECRET
+  }
+}
 
 var app = express();
 
@@ -25,9 +39,9 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser(config.cookieSecret));
+app.use(cookieParser(CONFIG.cookieSecret));
 app.use(session({
-  secret: config.cookieSecret,
+  secret: CONFIG.cookieSecret,
   cookie: {
     maxAge: 2592000000,
     signed: true

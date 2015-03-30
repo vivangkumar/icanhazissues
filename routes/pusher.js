@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var Pusher = require('pusher');
 
-var config = require('../config.json');
+var config = CONFIG;
 
 var pusher = new Pusher({
   appId: config.pusherAppId,

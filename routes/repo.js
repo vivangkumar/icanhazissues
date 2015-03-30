@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var Request = require('../lib/request');
 
-var config = require('../config.json');
+var config = CONFIG;
 
 router.get('/', function(req, res, next) {
   res.render('repo');
