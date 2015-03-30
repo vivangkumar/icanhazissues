@@ -30,7 +30,18 @@ This is a rewrite of the [original version](https://github.com/pusher/icanhaziss
     }
 
     ```
-- Run `npm start` to run the express app.
+    Alternatively you may set node environment variables for each of the above
+    ```
+    GITHUB_CLIENT_ID
+    GITHUB_CLIENT_ID
+    GITHUB_STATE
+    GITHUB_USER
+    PUSHER_APP_ID
+    PUSHER_KEY
+    PUSHER_SECRET
+    GITHUB_OAUTH_REDIRECT_URI
+    ```
+- Run `GITHUB_OAUTH_REDIRECT_URI='HOSTNAME:PORT' node ./bin/www` to run the express app.
 
 ### Gulp tasks
 

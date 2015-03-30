@@ -17,7 +17,7 @@ var auth = new OAuth(
 
 /* Get the authorize URL from Github */
 var authUrl = auth.getAuthorizeUrl({
-  redirect_uri: 'http://localhost:3000/login',
+  redirect_uri: process.env.GITHUB_OAUTH_REDIRECT_URI + '/login',
   scope: ['repo'],
   state: config.githubState
 });
@@ -51,7 +51,7 @@ router.get('/login', function(req, res, next) {
   var query = qs.parse(req.url.split('?')[1]);
   auth.getOAuthAccessToken(
     query.code,
-    {'redirect_uri': 'http://localhost:3000/'},
+    {'redirect_uri': process.env.GITHUB_OAUTH_REDIRECT_URI},
     function(error, accessToken, refreshToken, results) {
       if (error) {
         res.status(500).send(JSON.stringify({"error": error}));

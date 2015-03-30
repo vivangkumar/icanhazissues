@@ -10,9 +10,10 @@ block content
         form(class='form-inline' action='/repos/search' method='GET')
           div(class='form-group')
             | Search and choose a repository to add a Kanban board
-
+            br
+            br
             input(type='text' name='repo' class='form-control' id='repo-search-box' placeholder='Search for repositories')
-          button(type='submit' class='btn btn-primary' id='repo-search-button') Search
+            button(type='submit' class='btn btn-primary' id='repo-search-button') Search
 
     if repoNames
       div(class='row row-centered')
