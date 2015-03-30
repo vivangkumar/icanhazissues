@@ -73,10 +73,9 @@ router.get('/login', function(req, res, next) {
 
 /* Logout and destroy the session */
 router.get('/logout', function(req, res, next) {
-  req.session.destroy(function() {
-    res.clearCookie('accessToken');
-    res.render('logout');
-  });
+  req.session = null;
+  res.clearCookie('accessToken');
+  res.render('logout');
 })
 
 module.exports = router;
