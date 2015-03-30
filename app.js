@@ -5,8 +5,27 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var session = require('cookie-session');
 var bodyParser = require('body-parser');
+var fs = require('fs');
 
-var config = require('./config.json');
+/* Essentially a fix for Heroku */
+try {
+  var config = require('./config.json');
+} catch (e) {
+  console.log('Could not find config.json, trying env variables..');
+  var config = {
+    "githubClientId": process.env.GITHUB_CLIENT_ID,
+    "githubClientSecret": process.env.GITHUB_CLIENT_SECRET,
+    "githubState": process.env.GITHUB_STATE,
+    "cookieSecret": process.env.COOKIE_SECRET,
+    "boardColumns": ["ready", "development", "review", "release", "done"],
+    "githubUser": process.env.GITHUB_USER,
+    "pusherAppId": process.env.PUSHER_APP_ID,
+    "pusherKey": process.env.PUSHER_KEY,
+    "pusherSecret": process.env.PUSHER_SECRET,
+  }
+
+  fs.writeFile('config.json', JSON.stringify(config));
+}
 
 var app = express();
 
