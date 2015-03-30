@@ -33,9 +33,9 @@ function _categorizeIssues(issues, milestones) {
    * Get back to this
    * TODO
    */
-  for(var i = 0; i < issues.length; i++) {
-    for(m in categorizedIssues) {
-      for(cat in config.boardColumns) {
+  for (var i = 0; i < issues.length; i++) {
+    for (m in categorizedIssues) {
+      for (cat in config.boardColumns) {
         if (issues[i].milestone && issues[i].milestone.title == m) {
           if (issues[i].label.name == config.boardColumns[cat]) {
             categorizedIssues[m][config.boardColumns[cat]].push(issues[i]);
@@ -76,7 +76,7 @@ router.get('/:repo', function(req, res, next) {
             'url': parsedRepos[i].html_url,
             'assignee': parsedRepos[i].assignee,
             'label': parsedRepos[i].labels[0],
-            'milestone': parsedRepos[i].milestone || { 'title': 'uncategorized'}
+            'milestone': parsedRepos[i].milestone || {'title': 'uncategorized'}
           }
 
           if (parsedRepos[i].milestone) {

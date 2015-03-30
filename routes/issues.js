@@ -52,7 +52,7 @@ function _postIssueComment(data) {
     '/repos/' + data.owner + '/' + data.repo + '/issues/' + data.issueNumber + '/comments',
     'POST',
     {'Authorization': 'token ' + data.accessToken},
-    { 'body': 'changed status from ' + data.oldLabel + ' to ' + data.newLabel }
+    {'body': 'changed status from ' + data.oldLabel + ' to ' + data.newLabel}
   );
 
   request.do(function(error, response, body) {
