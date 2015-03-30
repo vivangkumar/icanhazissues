@@ -21,6 +21,7 @@
     "morgan": "~1.5.1",
     "node-data-structures": "^1.0.1",
     "oauth": "^0.9.12",
+    "pusher": "^1.0.4",
     "querystring": "^0.2.0",
     "request": "^2.53.0",
     "serve-favicon": "~2.2.0"
