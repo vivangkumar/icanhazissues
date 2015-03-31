@@ -4,7 +4,7 @@ body {
   font-family: 'Source Sans Pro', sans-serif;
   background-color: #41A9BD;
   color: white;
-  padding-top: 70px;
+  padding-top: 50px;
   font-size: medium;
 }
 
@@ -89,6 +89,7 @@ a {
   background-color: #E2E4E6;
   text-align: left;
   font-weight: bold;
+  padding: 0px;
 }
 
 .panel-default > .panel-heading {
@@ -144,7 +145,6 @@ a {
 
 .milestone-heading {
   text-align: left;
-  margin-bottom: 10px;
   font-weight: 700;
   background-color: inherit;
   height: 30px;
