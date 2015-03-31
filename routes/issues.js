@@ -8,29 +8,34 @@ router.post('/:repo/update/:issue', function(req, res, next) {
   var issueNumber = req.params.issue
     , repoName = req.params.repo;
   var body = {
-    'labels': [req.body.newLabel]
+    labels: [req.body.newLabel]
   };
   var request = new Request(
     '/repos/' + config.githubUser + '/' + repoName + '/issues/' + issueNumber,
     'PATCH',
-    {'Authorization': 'token ' + req.signedCookies.accessToken},
+    {Authorization: 'token ' + req.signedCookies.accessToken},
     body
   );
 
   request.do(function(error, response, body) {
     if (error) {
-      res.status(500).send(JSON.stringify({'error': error}))
+      res.render('error', {
+        message: error,
+        error: {
+          status: 500
+        }
+      });
     }
 
     if (response.statusCode == 200) {
-      res.status(200).send(JSON.stringify({'message': 'Issue updated'}));
+      res.status(200).send(JSON.stringify({message: 'Issue updated'}));
       var commentData = {
-        'owner': config.githubUser,
-        'repo': repoName,
-        'issueNumber': issueNumber,
-        'accessToken': req.signedCookies.accessToken,
-        'oldLabel': req.body.oldLabel,
-        'newLabel': req.body.newLabel
+        owner: config.githubUser,
+        repo: repoName,
+        issueNumber: issueNumber,
+        accessToken: req.signedCookies.accessToken,
+        oldLabel: req.body.oldLabel,
+        newLabel: req.body.newLabel
       };
       try {
         _postIssueComment(commentData);
@@ -38,7 +43,12 @@ router.post('/:repo/update/:issue', function(req, res, next) {
         console.log(ex);
       }
     } else {
-      res.status(response.statusCode).send(body);
+      res.render('error', {
+        message: JSON.parse(body).message,
+        error: {
+          status: response.statusCode,
+        }
+      });
     }
   });
 });
@@ -51,8 +61,8 @@ function _postIssueComment(data) {
   var request = new Request(
     '/repos/' + data.owner + '/' + data.repo + '/issues/' + data.issueNumber + '/comments',
     'POST',
-    {'Authorization': 'token ' + data.accessToken},
-    {'body': 'changed status from ' + data.oldLabel + ' to ' + data.newLabel}
+    {Authorization: 'token ' + data.accessToken},
+    {body: 'changed status from ' + data.oldLabel + ' to ' + data.newLabel}
   );
 
   request.do(function(error, response, body) {
