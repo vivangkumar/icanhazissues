@@ -14,15 +14,20 @@ router.get('/search', function(req, res, next) {
     res.render('repo', {error: 'Please enter a search term'});
   } else {
     var request = new Request(
-      '/search/repositories?q='+query+'+in:name+user:' + config.githubUser,
+      '/search/repositories?q='+ query +'+in:name+user:' + config.githubUser,
       'GET',
-      {'Authorization': 'token ' + req.signedCookies.accessToken},
+      {Authorization: 'token ' + req.signedCookies.accessToken},
       null
     );
 
     request.do(function(error, response, body) {
       if (error) {
-        res.status(500).send(JSON.stringify({"error": error}))
+        res.render('error', {
+          message: error,
+          error: {
+            status: 500
+          }
+        });
       }
 
       if (response.statusCode == 200) {
@@ -33,7 +38,12 @@ router.get('/search', function(req, res, next) {
         }
         res.render('repo', {repoNames: repoNames});
       } else {
-        res.status(response.statusCode).send(body);
+        res.render('error', {
+          message: JSON.parse(body).message,
+          error: {
+            status: response.statusCode,
+          }
+        });
       }
     });
   }

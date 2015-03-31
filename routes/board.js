@@ -54,13 +54,18 @@ router.get('/:user/:repo', function(req, res, next) {
   var request = new Request(
     '/repos/'+ config.githubUser + '/'+ repoName + '/issues?state=open&per_page=100',
     'GET',
-    {'Authorization': 'token ' + req.signedCookies.accessToken},
+    {Authorization: 'token ' + req.signedCookies.accessToken},
     null
   );
 
   request.do(function(error, response, body) {
     if (error) {
-      res.status(500).send(JSON.stringify({"error": error}));
+      res.render('error', {
+        message: error,
+        error: {
+          status: 500
+        }
+      });
     }
 
     if (response.statusCode == 200) {
@@ -68,15 +73,15 @@ router.get('/:user/:repo', function(req, res, next) {
       var issueList = [];
       var milestones = new Set();
 
-      for(var i = 0; i < parsedRepos.length; i++) {
-        if(parsedRepos[i].labels.length != 0) {
+      for (var i = 0; i < parsedRepos.length; i++) {
+        if (parsedRepos[i].labels.length != 0) {
           var issues = {
-            'issue_number': parsedRepos[i].number,
-            'title': parsedRepos[i].title,
-            'url': parsedRepos[i].html_url,
-            'assignee': parsedRepos[i].assignee,
-            'label': parsedRepos[i].labels[0],
-            'milestone': parsedRepos[i].milestone || {'title': 'uncategorized'}
+            issueNnumber: parsedRepos[i].number,
+            title: parsedRepos[i].title,
+            url: parsedRepos[i].html_url,
+            assignee: parsedRepos[i].assignee,
+            label: parsedRepos[i].labels[0],
+            milestone: parsedRepos[i].milestone || {title: 'uncategorized'}
           }
 
           if (parsedRepos[i].milestone) {
@@ -99,7 +104,12 @@ router.get('/:user/:repo', function(req, res, next) {
         newIssueUrl: 'https://github.com/' + config.githubUser + '/' + repoName + '/issues/new'
       });
     } else {
-      res.status(response.statusCode).send(body);
+      res.render('error', {
+        message: JSON.parse(body).message,
+        error: {
+          status: response.statusCode,
+        }
+      });
     }
   });
 });

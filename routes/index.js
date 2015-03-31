@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var OAuth = require('oauth').OAuth2;
 var qs = require('querystring');
+var Request = require('../lib/request');
 
 /* Config file */
 var config = CONFIG;
@@ -76,6 +77,6 @@ router.get('/logout', function(req, res, next) {
   req.session = null;
   res.clearCookie('accessToken');
   res.render('logout');
-})
+});
 
 module.exports = router;
