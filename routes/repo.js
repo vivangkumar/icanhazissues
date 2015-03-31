@@ -29,7 +29,7 @@ router.get('/search', function(req, res, next) {
         var repoNames = [];
         var parsedRepos = JSON.parse(body).items;
         for(var i = 0; i < parsedRepos.length; i++) {
-          repoNames.push(parsedRepos[i].name);
+          repoNames.push(parsedRepos[i].full_name);
         }
         res.render('repo', {repoNames: repoNames});
       } else {

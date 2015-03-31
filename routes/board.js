@@ -48,7 +48,7 @@ function _categorizeIssues(issues, milestones) {
   return categorizedIssues;
 }
 
-router.get('/:repo', function(req, res, next) {
+router.get('/:user/:repo', function(req, res, next) {
   var repoName = req.params.repo;
 
   var request = new Request(
