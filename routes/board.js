@@ -76,7 +76,7 @@ router.get('/:user/:repo', function(req, res, next) {
       for (var i = 0; i < parsedRepos.length; i++) {
         if (parsedRepos[i].labels.length != 0) {
           var issues = {
-            issueNnumber: parsedRepos[i].number,
+            issueNumber: parsedRepos[i].number,
             title: parsedRepos[i].title,
             url: parsedRepos[i].html_url,
             assignee: parsedRepos[i].assignee,
