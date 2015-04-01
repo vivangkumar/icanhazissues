@@ -33,6 +33,8 @@ channel.bind('client-issue-updates', function(data) {
                     </div>
                   </li>';
   $(milestoneClass).append(cardHtml);
+  console.log(_getColourCode(data.createdAt));
+  _assignColourCode();
 });
 
 var issueGroups = document.getElementsByClassName('issue-list-group');
