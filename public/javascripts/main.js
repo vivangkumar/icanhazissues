@@ -24,7 +24,7 @@ channel.bind('client-issue-updates', function(data) {
   }
 
   var cardId = data.toLabel + '-' + data.number;
-  var cardHtml = '<li class="list-group-item issue-list-item" data-issue-number="'+ data.number +'" id="'+ cardId +'">
+  var cardHtml = '<li class="list-group-item issue-list-item" data-created="'+ data.createdAt +'" data-issue-number="'+ data.number +'" id="'+ cardId +'">
                     <a href="'+ data.url +'">
                      <div class="issue-text col-xs-8">'+ data.text +'</div>
                     </a>
@@ -68,6 +68,7 @@ for(var i = 0; i < issueGroups.length; i++) {
         "milestone": toGroup,
         "fromLabel": fromLabel,
         "toLabel": toLabel,
+        "createdAt": event.item.getAttribute('data-created'),
         "url": cardChildren[0].href,
         "text": cardChildren[0].children[0].innerText
       };
@@ -95,7 +96,7 @@ for(var i = 0; i < issueGroups.length; i++) {
  * @returns boolean
  */
 function updateIssue(issueNumber, oldLabel, newLabel) {
-  var repoName = window.location.pathname.split('/')[2];
+  var repoName = window.location.pathname.split('/')[3];
   var ISSUE_ENDPOINT = '/issues/' + repoName + '/update/' +issueNumber;
   var data = {
     "oldLabel": oldLabel,

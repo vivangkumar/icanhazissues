@@ -39,7 +39,7 @@ router.get('/search', function(req, res, next) {
         res.render('repo', {repoNames: repoNames});
       } else {
         res.render('error', {
-          message: JSON.parse(body).message,
+          message: body.message,
           error: {
             status: response.statusCode,
           }

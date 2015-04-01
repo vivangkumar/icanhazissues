@@ -44,7 +44,7 @@ router.post('/:repo/update/:issue', function(req, res, next) {
       }
     } else {
       res.render('error', {
-        message: JSON.parse(body).message,
+        message: body.message,
         error: {
           status: response.statusCode,
         }
