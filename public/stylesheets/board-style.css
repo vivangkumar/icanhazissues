@@ -4,7 +4,7 @@ body {
   font-family: 'Source Sans Pro', sans-serif;
   background-color: #41A9BD;
   color: white;
-  padding-top: 50px;
+  padding-top: 25px;
   font-size: medium;
 }
 
@@ -121,7 +121,7 @@ a {
   background-color: #34495E;
   border: 0px;
   border-radius: 0px;
-  min-height: 40px;
+  min-height: 20px;
 }
 
 .navbar-default {
@@ -163,10 +163,6 @@ a {
 
 .milestone-heading-text {
   padding: 5px;
-}
-
-.heading-container {
-  padding-top: 10px;
 }
 
 .col-xs-8 {

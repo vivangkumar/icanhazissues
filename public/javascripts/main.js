@@ -33,7 +33,6 @@ channel.bind('client-issue-updates', function(data) {
                     </div>
                   </li>';
   $(milestoneClass).append(cardHtml);
-  console.log(_getColourCode(data.createdAt));
   _assignColourCode();
 });
 
@@ -113,6 +112,7 @@ function updateIssue(issueNumber, oldLabel, newLabel) {
       console.log(msg);
     },
     error: function(error) {
+
       console.log('Error: ' + JSON.parse(error));
     }
   });
@@ -154,7 +154,7 @@ function _assignColourCode() {
 $(window).load(function() {
   $('.heading-column:last-child').append(
     '<a class="add-issue-button pull-right" href="'+newIssueUrl+'">
-      <i class="fa fa-plus fa-lg"></i>
+      <i class="fa fa-plus fa-sm"></i>
     </a>'
   );
   _assignColourCode();
