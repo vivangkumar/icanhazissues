@@ -22,12 +22,8 @@ router.get('/search', function(req, res, next) {
 
     request.do(function(error, response, body) {
       if (error) {
-        res.render('error', {
-          message: error,
-          error: {
-            status: 500
-          }
-        });
+        console.log('Error ' + error + ' Status code 500');
+        res.render('repo', {error: 'There was an error querying the Github API.'});
       }
 
       if (response.statusCode == 200) {
@@ -38,12 +34,8 @@ router.get('/search', function(req, res, next) {
         }
         res.render('repo', {repoNames: repoNames});
       } else {
-        res.render('error', {
-          message: body.message,
-          error: {
-            status: response.statusCode,
-          }
-        });
+        console.log('Error ' + body + ' Status code ' + response.statusCode);
+        res.render('repo', {error: 'There was an error querying the Github API.'});
       }
     });
   }

@@ -19,12 +19,7 @@ router.post('/:repo/update/:issue', function(req, res, next) {
 
   request.do(function(error, response, body) {
     if (error) {
-      res.render('error', {
-        message: error,
-        error: {
-          status: 500
-        }
-      });
+      res.status(500).send(JSON.stringify({error: 'There was an error updating the issue'}));
     }
 
     if (response.statusCode == 200) {
@@ -43,12 +38,7 @@ router.post('/:repo/update/:issue', function(req, res, next) {
         console.log(ex);
       }
     } else {
-      res.render('error', {
-        message: body.message,
-        error: {
-          status: response.statusCode,
-        }
-      });
+      res.status(response.statusCode).send(JSON.stringify({error: 'There was an error updating the issue'}));
     }
   });
 });
