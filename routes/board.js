@@ -80,6 +80,7 @@ router.get('/:user/:repo', function(req, res, next) {
             title: parsedRepos[i].title,
             url: parsedRepos[i].html_url,
             assignee: parsedRepos[i].assignee,
+            createdAt: parsedRepos[i].created_at,
             label: parsedRepos[i].labels[0],
             milestone: parsedRepos[i].milestone || {title: 'uncategorized'}
           }

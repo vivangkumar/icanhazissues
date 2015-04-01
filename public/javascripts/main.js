@@ -115,10 +115,44 @@ function updateIssue(issueNumber, oldLabel, newLabel) {
   });
 }
 
+/**
+ * Get colours for issues based on date.
+ * @param date
+ */
+function _getColourCode(date) {
+  var date = new Date(date);
+  var now = new Date();
+  var diff = now - date;
+  var day = 24 * 60 * 60 * 1000;
+  var startOfYesterday = now - (now % day) - day;
+
+  if (date > startOfYesterday) {
+    return '#00B16A';
+  } else if (diff < 7 * day) {
+    return '#F7CA18';
+  } else if (diff < 14 * day) {
+    return '#F9690E';
+  } else {
+    return '#F22613';
+  }
+}
+
+/**
+ * Assign colour codes using border bottom.
+ *
+ */
+function _assignColourCode() {
+  $('.issue-list-item').each(function() {
+    var colourCode = _getColourCode($(this).attr('data-created'));
+    $(this).css('border-bottom-width', '5px').css('border-bottom-color', colourCode);
+  });
+}
+
 $(window).load(function() {
   $('.heading-column:last-child').append(
     '<a class="add-issue-button pull-right" href="'+newIssueUrl+'">
       <i class="fa fa-plus fa-lg"></i>
     </a>'
   );
+  _assignColourCode();
 });
