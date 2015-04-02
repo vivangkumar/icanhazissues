@@ -18,20 +18,28 @@ channel.bind('client-issue-updates', function(data) {
 
   // Check if we have an assignee image
   if (data.avatarUrl) {
-    assignee = '<span class="pull-right">
-                  <img src="'+ data.avatarUrl +'" class="img img-circle avatar"></img>
+    assignee = '<span class="pull-right"> \
+                  <img src="'+ data.avatarUrl +'" class="img img-circle avatar"></img> \
                 </span>';
   }
 
   var cardId = data.toLabel + '-' + data.number;
-  var cardHtml = '<li class="list-group-item issue-list-item" data-created="'+ data.createdAt +'" data-issue-number="'+ data.number +'" id="'+ cardId +'">
-                    <a href="'+ data.url +'">
-                     <div class="issue-text col-xs-8">'+ data.text +'</div>
-                    </a>
-                    <div class="issue-assignee col-xs-4 pull-right">
-                    '+ assignee +'
-                    </div>
-                  </li>';
+  if (assignee) {
+    var cardHtml = '<li class="list-group-item issue-list-item" data-created="'+ data.createdAt +'" data-issue-number="'+ data.number +'" id="'+ cardId +'"> \
+                      <div class="issue-text col-xs-8"> \
+                        <a href="'+ data.url +'"> '+ data.text +' \
+                      </div> \
+                      <div class="issue-assignee col-xs-4 pull-right"> \
+                        '+ assignee +' \
+                      </div> \
+                    </li>';
+  } else {
+    var cardHtml = '<div class="issue-text col-xs-12"> \
+                      <a href="'+ data.url +'"> '+ data.text +' </a> \
+                    </div>';
+  }
+
+  // Append to list and colour code moved card
   $(milestoneClass).append(cardHtml);
   _assignColourCode();
 });
@@ -63,6 +71,7 @@ for(var i = 0; i < issueGroups.length; i++) {
       toLabel = parentNode.getAttribute('data-label');
       toGroup = parentNode.getAttribute('data-milestone');
       var cardChildren = event.item.children;
+
       // Card that is to me updated and synced
       var cardMoved = {
         "number": issueNumber,
@@ -75,7 +84,7 @@ for(var i = 0; i < issueGroups.length; i++) {
       };
 
       // Append avatar url if there is one
-      if(cardChildren[1].children[0]) {
+      if(cardChildren[1]) {
         cardMoved['avatarUrl'] = cardChildren[1].children[0].children[0].currentSrc;
       }
 
@@ -153,8 +162,8 @@ function _assignColourCode() {
 
 $(window).load(function() {
   $('.heading-column:last-child').append(
-    '<a class="add-issue-button pull-right" href="'+newIssueUrl+'">
-      <i class="fa fa-plus fa-sm"></i>
+    '<a class="add-issue-button pull-right" href="'+newIssueUrl+'"> \
+      <i class="fa fa-plus fa-sm"></i> \
     </a>'
   );
   _assignColourCode();
