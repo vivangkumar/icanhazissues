@@ -21,13 +21,13 @@ block content
                     li(class='list-group-item issue-list-item' data-created='#{i.createdAt}' data-issue-number='#{i.issueNumber}' id='#{k}-#{i.issueNumber}')
                       if i.assignee
                         div(class='issue-text col-xs-8')
-                          a(href='#{i.url}') #{i.title}
+                          a(href='#{i.url}' target='_blank') #{i.title}
                         div(class='issue-assignee col-xs-4 pull-right')
                           span(class='pull-right')
                             img(src='#{i.assignee.avatar_url}&s=40' class='img-circle avatar')
                       else
                         div(class='issue-text col-xs-12')
-                          a(href='#{i.url}') #{i.title}
+                          a(href='#{i.url}' target='_blank') #{i.title}
 
   script.
     var pusherKey = '#{pusherKey}';

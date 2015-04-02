@@ -162,7 +162,7 @@ function _assignColourCode() {
 
 $(window).load(function() {
   $('.heading-column:last-child').append(
-    '<a class="add-issue-button pull-right" href="'+newIssueUrl+'"> \
+    '<a class="add-issue-button pull-right" target="_blank" href="'+newIssueUrl+'"> \
       <i class="fa fa-plus fa-sm"></i> \
     </a>'
   );
