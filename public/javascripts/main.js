@@ -70,7 +70,6 @@ for(var i = 0; i < issueGroups.length; i++) {
       var parentNode = event.item.parentNode;
       toLabel = parentNode.getAttribute('data-label');
       toGroup = parentNode.getAttribute('data-milestone');
-      var cardChildren = event.item.children;
 
       // Card that is to me updated and synced
       var cardMoved = {
@@ -79,13 +78,13 @@ for(var i = 0; i < issueGroups.length; i++) {
         "fromLabel": fromLabel,
         "toLabel": toLabel,
         "createdAt": event.item.getAttribute('data-created'),
-        "url": cardChildren[0].href,
-        "text": cardChildren[0].children[0].innerText
+        "url": event.item.getElementsByTagName('a')[0].href,
+        "text": event.item.getElementsByTagName('a')[0].innerText
       };
-
+      var issueAssignee = event.item.querySelector('.issue-assignee');
       // Append avatar url if there is one
-      if(cardChildren[1]) {
-        cardMoved['avatarUrl'] = cardChildren[1].children[0].children[0].currentSrc;
+      if(issueAssignee) {
+        cardMoved['avatarUrl'] = issueAssignee.querySelector('.avatar').getAttribute('src');
       }
 
       if(fromLabel != toLabel && fromMilestone == toMilestone) {
