@@ -13,7 +13,7 @@ channel.bind('client-issue-updates', function(data) {
   var cardToRemove = '#'+ data.fromLabel + '-' + data.number;
   $(cardToRemove).remove();
 
-  var milestoneClass = '.' + data.milestone + '-'+ data.toLabel +'-list-group';
+  var milestoneClass = '.' + data.milestone.replace(/ /g, '-') + '-'+ data.toLabel +'-list-group';
   var assignee = "";
 
   // Check if we have an assignee image
@@ -25,20 +25,20 @@ channel.bind('client-issue-updates', function(data) {
 
   var cardId = data.toLabel + '-' + data.number;
   if (assignee) {
-    var cardHtml = '<li class="list-group-item issue-list-item" data-created="'+ data.createdAt +'" data-issue-number="'+ data.number +'" id="'+ cardId +'"> \
-                      <div class="issue-text col-xs-8"> \
-                        <a href="'+ data.url +'"> '+ data.text +' \
-                      </div> \
-                      <div class="issue-assignee col-xs-4 pull-right"> \
-                        '+ assignee +' \
-                      </div> \
-                    </li>';
+    var innerCardHtml = '<div class="issue-text col-xs-8"> \
+                           <a href="'+ data.url +'"> '+ data.text +' \
+                         </div> \
+                         <div class="issue-assignee col-xs-4 pull-right"> \
+                           '+ assignee +' \
+                         </div>';
   } else {
-    var cardHtml = '<div class="issue-text col-xs-12"> \
-                      <a href="'+ data.url +'"> '+ data.text +' </a> \
-                    </div>';
+    var innerCardHtml = '<div class="issue-text col-xs-12"> \
+                           <a href="'+ data.url +'"> '+ data.text +' </a> \
+                         </div>';
   }
-
+  var cardHtml = '<li class="list-group-item issue-list-item" data-created="'+ data.createdAt +'" data-issue-number="'+ data.number +'" id="'+ cardId +'"> \
+                  '+ innerCardHtml +'
+                  </li>';
   // Append to list and colour code moved card
   $(milestoneClass).append(cardHtml);
   _assignColourCode();
