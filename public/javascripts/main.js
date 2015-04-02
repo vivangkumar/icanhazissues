@@ -91,7 +91,7 @@ for(var i = 0; i < issueGroups.length; i++) {
         event.item.setAttribute('id', toLabel +'-'+ issueNumber);
         // Trigger pusher event and update issue on github
         channel.trigger('client-issue-updates', cardMoved);
-        updateIssue(issueNumber, fromLabel, toLabel);
+        //updateIssue(issueNumber, fromLabel, toLabel);
       }
     }
   });
