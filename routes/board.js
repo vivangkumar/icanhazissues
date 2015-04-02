@@ -5,7 +5,7 @@ var Ds = require('node-data-structures');
 var Set = Ds.Set;
 
 var config = CONFIG;
-
+var blockedIssues = [];
 /**
  * Categorize issues based on milestones and column names.
  * @param issues
@@ -37,15 +37,27 @@ function _categorizeIssues(issues, milestones) {
     for (m in categorizedIssues) {
       for (cat in config.boardColumns) {
         if (issues[i].milestone && issues[i].milestone.title == m) {
-          if (issues[i].label.name == config.boardColumns[cat]) {
+          if (_checkLabelMatches(issues[i], config.boardColumns[cat])) {
             categorizedIssues[m][config.boardColumns[cat]].push(issues[i]);
           }
         }
       }
     }
+
+    if (_checkLabelMatches(issues[i], 'blocked')) {
+      blockedIssues.push(issues[i]);
+    }
   }
 
   return categorizedIssues;
+}
+
+function _checkLabelMatches(issue, label) {
+  for(var i = 0; i < issue.label.length; i++) {
+    if (issue.label[i].name == label) {
+      return true;
+    }
+  }
 }
 
 router.get('/:user/:repo', function(req, res, next) {
@@ -76,11 +88,12 @@ router.get('/:user/:repo', function(req, res, next) {
       for (var i = 0; i < parsedRepos.length; i++) {
         if (parsedRepos[i].labels.length != 0) {
           var issues = {
-            issueNnumber: parsedRepos[i].number,
+            issueNumber: parsedRepos[i].number,
             title: parsedRepos[i].title,
             url: parsedRepos[i].html_url,
             assignee: parsedRepos[i].assignee,
-            label: parsedRepos[i].labels[0],
+            createdAt: parsedRepos[i].created_at,
+            label: parsedRepos[i].labels,
             milestone: parsedRepos[i].milestone || {title: 'uncategorized'}
           }
 
@@ -105,7 +118,7 @@ router.get('/:user/:repo', function(req, res, next) {
       });
     } else {
       res.render('error', {
-        message: JSON.parse(body).message,
+        message: body.message,
         error: {
           status: response.statusCode,
         }

@@ -4,7 +4,7 @@ body {
   font-family: 'Source Sans Pro', sans-serif;
   background-color: #41A9BD;
   color: white;
-  padding-top: 50px;
+  padding-top: 25px;
   font-size: medium;
 }
 
@@ -57,16 +57,23 @@ a {
 
 .issue-list-group {
   color: black;
+  margin-bottom: 5px;
   min-height: 70px;
 }
 
 .issue-list-item {
-  min-height: 70px;
-  margin: 10px;
+  margin: 5px;
   border-radius: 5px;
   font-size: 12px;
   text-align: left;
   overflow: hidden;
+}
+
+.list-group-item {
+  padding-left: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-right: 2px;
 }
 
 .board-panel-body {
@@ -77,11 +84,14 @@ a {
 .issue-text {
   height: 100%;
   padding-left: 0px;
+  padding-right: 0px;
 }
 
 .issue-assignee {
   height: 100%;
   padding-right: 0px;
+  padding-left: 0px;
+  width: 21.3%;
 }
 
 .board-panel-heading {
@@ -111,7 +121,7 @@ a {
   background-color: #34495E;
   border: 0px;
   border-radius: 0px;
-  min-height: 40px;
+  min-height: 20px;
 }
 
 .navbar-default {
@@ -155,6 +165,14 @@ a {
   padding: 5px;
 }
 
-.heading-container {
-  padding-top: 10px;
+.col-xs-8 {
+  width: 78.6%;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+.board-panel {
+  margin-bottom: 0px;
 }

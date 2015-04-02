@@ -1,6 +1,29 @@
 extends board-layout
 
+block card
+  if i.assignee
+    div(class='issue-text col-xs-8')
+      a(href='#{i.url}' target='_blank') #{i.title}
+    div(class='issue-assignee col-xs-4 pull-right')
+      span(class='pull-right')
+        img(src='#{i.assignee.avatar_url}&s=40' class='img-circle avatar')
+  else
+    div(class='issue-text col-xs-12')
+      a(href='#{i.url}' target='_blank') #{i.title}
+
 block content
+  - var dash = function(text) {
+  -  return text.replace(/ /g, '-');
+  -}
+
+  - var blocked = function _checkLabelMatches(issue) {
+  -  for(var i = 0; i < issue.label.length; i++) {
+  -    if (issue.label[i].name == 'blocked') {
+  -      return true;
+  -    }
+  -  }
+  - }
+
   nav(class='navbar navbar-default navbar-fixed-top board-navbar')
     div(class='container-fluid heading-container')
       each col in columns
@@ -16,15 +39,14 @@ block content
             div(class='panel board-panel panel-default')
               div(class='panel-heading board-panel-heading')
               div(class='panel-body board-panel-body')
-                ul(class='list-group issue-list-group #{key}-#{k}-list-group' data-label='#{k}' data-milestone='#{key}')
+                ul(class='list-group issue-list-group #{dash(key)}-#{k}-list-group' data-label='#{k}' data-milestone='#{key}')
                   each i in v
-                    li(class='list-group-item issue-list-item' data-issue-number='#{i.issueNumber}' id='#{k}-#{i.issueNumber}')
-                      a(href='#{i.url}')
-                        div(class='issue-text col-xs-8') #{i.title}
-                      div(class='issue-assignee col-xs-4 pull-right')
-                        if i.assignee
-                          span(class='pull-right')
-                            img(src='#{i.assignee.avatar_url}&s=50' class='img-circle avatar')
+                    if blocked(i)
+                      li(class='list-group-item issue-list-item' data-created='#{i.createdAt}' data-blocked='true' data-issue-number='#{i.issueNumber}' id='#{k}-#{i.issueNumber}')
+                        block card
+                    else
+                      li(class='list-group-item issue-list-item' data-created='#{i.createdAt}' data-issue-number='#{i.issueNumber}' id='#{k}-#{i.issueNumber}')
+                        block card
 
   script.
     var pusherKey = '#{pusherKey}';
