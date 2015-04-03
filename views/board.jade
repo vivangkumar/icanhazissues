@@ -12,10 +12,12 @@ block card
       a(href='#{i.url}' target='_blank') #{i.title}
 
 block content
+  - // Replace all spaces with a `-` when naming classes
   - var dash = function(text) {
   -  return text.replace(/ /g, '-');
   -}
-
+  
+  - // Check for blocked issues
   - var blocked = function _checkLabelMatches(issue) {
   -  for(var i = 0; i < issue.label.length; i++) {
   -    if (issue.label[i].name == 'blocked') {
@@ -47,7 +49,7 @@ block content
                     else
                       li(class='list-group-item issue-list-item' data-created='#{i.createdAt}' data-issue-number='#{i.issueNumber}' id='#{k}-#{i.issueNumber}')
                         block card
-
+  
   script.
     var pusherKey = '#{pusherKey}';
     var newIssueUrl = '#{newIssueUrl}';

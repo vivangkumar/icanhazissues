@@ -5,7 +5,7 @@ var Ds = require('node-data-structures');
 var Set = Ds.Set;
 
 var config = CONFIG;
-var blockedIssues = [];
+
 /**
  * Categorize issues based on milestones and column names.
  * @param issues
@@ -43,15 +43,18 @@ function _categorizeIssues(issues, milestones) {
         }
       }
     }
-
-    if (_checkLabelMatches(issues[i], 'blocked')) {
-      blockedIssues.push(issues[i]);
-    }
   }
 
   return categorizedIssues;
 }
 
+/**
+ * Check if the labels assigned to an issue
+ * match the one we want.
+ * @param issue
+ * @param label
+ * @returns boolean
+ */
 function _checkLabelMatches(issue, label) {
   for(var i = 0; i < issue.label.length; i++) {
     if (issue.label[i].name == label) {
@@ -62,7 +65,6 @@ function _checkLabelMatches(issue, label) {
 
 router.get('/:user/:repo', function(req, res, next) {
   var repoName = req.params.repo;
-
   var request = new Request(
     '/repos/'+ config.githubUser + '/'+ repoName + '/issues?state=open&per_page=100',
     'GET',
@@ -120,7 +122,7 @@ router.get('/:user/:repo', function(req, res, next) {
       res.render('error', {
         message: body.message,
         error: {
-          status: response.statusCode,
+          status: response.statusCode
         }
       });
     }

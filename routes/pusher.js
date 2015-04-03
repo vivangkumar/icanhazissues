@@ -10,6 +10,7 @@ var pusher = new Pusher({
   secret: config.pusherSecret
 });
 
+/** Auth endpoint for private channels **/
 router.post('/auth', function(req, res, next) {
   var socketId = req.body.socket_id;
   var channel = req.body.channel_name;

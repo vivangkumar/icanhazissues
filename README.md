@@ -17,6 +17,7 @@ This is a rewrite of the [original version](https://github.com/pusher/icanhaziss
   Call it what ever you want, make sure the callback uri points to your local hostname and port
   Copy the secret and client ID
 - Create an account with Pusher if you dont have one and copy the credentials
+- Also make sure that **client events are enabled**
 - Create a `config.json` in the root directory
     This must contain the following fields:
 

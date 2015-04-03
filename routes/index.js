@@ -55,7 +55,7 @@ router.get('/login', function(req, res, next) {
     {'redirect_uri': process.env.GITHUB_OAUTH_REDIRECT_URI},
     function(error, accessToken, refreshToken, results) {
       if (error) {
-        res.status(500).send(JSON.stringify({"error": error}));
+        res.status(500).send(JSON.stringify({error: error}));
       } else if (results.error) {
         res.status(401).send(JSON.stringify(results));
       } else {

@@ -13,11 +13,10 @@ channel.bind('client-issue-updates', function(data) {
   var cardToRemove = '#'+ data.fromLabel + '-' + data.issueNumber;
   $(cardToRemove).remove();
 
-  var milestoneClass = '.' + data.milestone.replace(/ /g, '-') + '-'+ data.toLabel +'-list-group';
+  var milestoneClass = '.' + data.milestone.replace(/ /g, '-') + '-' + data.toLabel + '-list-group';
 
-  // Append to list and colour code moved card
+  // Append to the right list
   $(milestoneClass).append(data.cardHtml);
-  _assignColourCode();
 });
 
 var issueGroups = document.getElementsByClassName('issue-list-group');
@@ -28,6 +27,7 @@ var fromLabel = ""
 
 for(var i = 0; i < issueGroups.length; i++) {
   var issueMilestone = issueGroups[i].getAttribute('data-milestone');
+
   /* Create sortable instance for each milestone, making them movable only
    * within each milestone
    */
@@ -56,7 +56,7 @@ for(var i = 0; i < issueGroups.length; i++) {
       };
 
       if(fromLabel != toLabel && fromMilestone == toMilestone) {
-        event.item.setAttribute('id', toLabel +'-'+ issueNumber);
+        event.item.setAttribute('id', toLabel + '-' + issueNumber);
         cardMoved['cardHtml'] = event.item.outerHTML;
         // Trigger pusher event and update issue on github
         channel.trigger('client-issue-updates', cardMoved);
@@ -118,8 +118,8 @@ function _getColourCode(date) {
 }
 
 /**
- * Assign colour codes using border bottom.
- *
+ * Assign colour codes using border bottom
+ * to each element with class `.issue-list-item`
  */
 function _assignColourCode() {
   $('.issue-list-item').each(function() {
@@ -128,9 +128,13 @@ function _assignColourCode() {
   });
 }
 
+/**
+ * We want the add new issue button appended to the last child
+ * of the heading columns
+ */
 $(window).load(function() {
   $('.heading-column:last-child').append(
-    '<a class="add-issue-button pull-right" target="_blank" href="'+newIssueUrl+'"> \
+    '<a class="add-issue-button pull-right" target="_blank" href="'+ newIssueUrl +'"> \
       <i class="fa fa-plus fa-sm"></i> \
     </a>'
   );
