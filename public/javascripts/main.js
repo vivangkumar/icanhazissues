@@ -20,6 +20,7 @@ channel.bind('client-issue-updates', function(data) {
 });
 
 var issueGroups = document.getElementsByClassName('issue-list-group');
+var repositoryName = window.location.pathname.split('/')[3];
 var fromLabel = ""
   , toLabel = ""
   , fromMilestone = ""
@@ -81,8 +82,7 @@ for(var i = 0; i < issueGroups.length; i++) {
  * @returns boolean
  */
 function updateIssue(issueNumber, oldLabel, newLabel, blocked) {
-  var repoName = window.location.pathname.split('/')[3];
-  var ISSUE_ENDPOINT = '/issues/' + repoName + '/update/' +issueNumber;
+  var ISSUE_ENDPOINT = '/issues/' + repositoryName + '/update/' +issueNumber;
   var data = {
     oldLabel: oldLabel,
     newLabel: newLabel,
@@ -155,7 +155,7 @@ function _addMenu() {
       '<i class="fa fa-bars fa-sm"></i>' +
     '</a>' +
     '<ul class="dropdown-menu" role="menu" aria-labelledby="menu-dropdown">' +
-      '<li role="presentation" class="dropdown-header">'+ window.location.pathname.split('/')[3] +'</li>' +
+      '<li role="presentation" class="dropdown-header">'+ repositoryName +'</li>' +
       '<li role="presentation"><a role="menuitem" tabindex="-1" href="/repos">Repository search</a></li>' +
       '<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Retrospective reminders</a></li>' +
       '<li role="presentation"><a role="menuitem" tabindex="-1" href="/logout">Logout</a></li>' +
