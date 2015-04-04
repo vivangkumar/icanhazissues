@@ -136,6 +136,9 @@ function _assignColourCode() {
   });
 }
 
+/**
+ * Look for issues that are blocked and add a label.
+ */
 function _addBlockedLabel() {
   $('.issue-list-item[data-blocked="true"]').each(function() {
     var label = '<span class="label label-danger">BLOCKED</span>'
@@ -144,16 +147,9 @@ function _addBlockedLabel() {
 }
 
 /**
- * We want the add new issue button appended to the last child
- * of the heading columns
+ * Add a menu button with a dropdown
  */
-$(window).load(function() {
-  $('.heading-column:last-child').append(
-    '<a class="add-issue-button pull-right" target="_blank" href="'+ newIssueUrl +'">' +
-      '<i class="fa fa-plus fa-sm"></i>' +
-    '</a>'
-  );
-
+function _addMenu() {
   $('.heading-column:first-child').append(
     '<a class="menu-button pull-left" data-toggle="dropdown" id="menu-dropdown">' +
       '<i class="fa fa-bars fa-sm"></i>' +
@@ -164,6 +160,24 @@ $(window).load(function() {
       '<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Retrospective reminders</a></li>' +
     '</ul>'
   );
+}
+
+/**
+ * We want the add new issue button appended to the last child
+ * of the heading columns
+ */
+function _addNewIssueButton() {
+  $('.heading-column:last-child').append(
+    '<a class="add-issue-button pull-right" target="_blank" href="'+ newIssueUrl +'">' +
+      '<i class="fa fa-plus fa-sm"></i>' +
+    '</a>'
+  );
+}
+
+
+$(window).load(function() {
+  _addMenu();
+  _addNewIssueButton();
   _assignColourCode();
   _addBlockedLabel();
 });
