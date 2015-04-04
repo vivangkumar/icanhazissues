@@ -134,9 +134,20 @@ function _assignColourCode() {
  */
 $(window).load(function() {
   $('.heading-column:last-child').append(
-    '<a class="add-issue-button pull-right" target="_blank" href="'+ newIssueUrl +'"> \
-      <i class="fa fa-plus fa-sm"></i> \
-    </a>'
+    '<a class="add-issue-button pull-right" target="_blank" href="'+ newIssueUrl +'">' +
+      '<i class="fa fa-plus fa-sm"></i>' +
+    '</a>'
+  );
+
+  $('.heading-column:first-child').append(
+    '<a class="menu-button pull-left" data-toggle="dropdown" id="menu-dropdown">' +
+      '<i class="fa fa-bars fa-sm"></i>' +
+    '</a>' +
+    '<ul class="dropdown-menu" role="menu" aria-labelledby="menu-dropdown">' +
+      '<li role="presentation"><a role="menuitem" tabindex="-1" href="/repos">Repository search</a></li>' +
+      '<li role="presentation"><a role="menuitem" tabindex="-1" href="/logout">Logout</a></li>' +
+      '<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Retrospective reminders</a></li>' +
+    '</ul>'
   );
   _assignColourCode();
 });
