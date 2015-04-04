@@ -157,7 +157,11 @@ function _addMenu() {
     '<ul class="dropdown-menu" role="menu" aria-labelledby="menu-dropdown">' +
       '<li role="presentation" class="dropdown-header">'+ repositoryName +'</li>' +
       '<li role="presentation"><a role="menuitem" tabindex="-1" href="/repos">Repository search</a></li>' +
-      '<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Retrospective reminders</a></li>' +
+      '<li role="presentation">' +
+        '<a role="menuitem" href="#" data-toggle="modal" data-target="#retrospective-modal">' +
+          'Retrospective reminders' +
+        '</a>' +
+      '</li>' +
       '<li role="presentation"><a role="menuitem" tabindex="-1" href="/logout">Logout</a></li>' +
     '</ul>'
   );
@@ -174,7 +178,6 @@ function _addNewIssueButton() {
     '</a>'
   );
 }
-
 
 $(window).load(function() {
   _addMenu();
