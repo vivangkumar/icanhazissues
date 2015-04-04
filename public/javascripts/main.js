@@ -44,8 +44,14 @@ for(var i = 0; i < issueGroups.length; i++) {
     onEnd: function(event) {
       var issueNumber = event.item.getAttribute('data-issue-number');
       var parentNode = event.item.parentNode;
+      var blocked = false;
+
       toLabel = parentNode.getAttribute('data-label');
       toMilestone = parentNode.getAttribute('data-milestone');
+
+      if (event.item.getAttribute('data-blocked') == 'true') {
+        blocked = true;
+      }
 
       // Card that is to me updated and synced
       var cardMoved = {
@@ -60,7 +66,7 @@ for(var i = 0; i < issueGroups.length; i++) {
         cardMoved['cardHtml'] = event.item.outerHTML;
         // Trigger pusher event and update issue on github
         channel.trigger('client-issue-updates', cardMoved);
-        updateIssue(issueNumber, fromLabel, toLabel);
+        updateIssue(issueNumber, fromLabel, toLabel, blocked);
       }
     }
   });
@@ -71,14 +77,16 @@ for(var i = 0; i < issueGroups.length; i++) {
  * @param issueNumber
  * @param oldLabel
  * @param newLabel
+ * @param blocked
  * @returns boolean
  */
-function updateIssue(issueNumber, oldLabel, newLabel) {
+function updateIssue(issueNumber, oldLabel, newLabel, blocked) {
   var repoName = window.location.pathname.split('/')[3];
   var ISSUE_ENDPOINT = '/issues/' + repoName + '/update/' +issueNumber;
   var data = {
-    "oldLabel": oldLabel,
-    "newLabel": newLabel
+    oldLabel: oldLabel,
+    newLabel: newLabel,
+    blocked: blocked
   }
 
   var request = $.ajax({
@@ -128,6 +136,13 @@ function _assignColourCode() {
   });
 }
 
+function _addBlockedLabel() {
+  $('.issue-list-item[data-blocked="true"]').each(function() {
+    var label = '<span class="label label-danger">BLOCKED</span>'
+    $(this).find('.issue-text').append("  " + label);
+  });
+}
+
 /**
  * We want the add new issue button appended to the last child
  * of the heading columns
@@ -150,4 +165,5 @@ $(window).load(function() {
     '</ul>'
   );
   _assignColourCode();
+  _addBlockedLabel();
 });

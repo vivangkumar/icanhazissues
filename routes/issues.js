@@ -7,9 +7,16 @@ var config = CONFIG;
 router.post('/:repo/update/:issue', function(req, res, next) {
   var issueNumber = req.params.issue
     , repoName = req.params.repo;
+  var labelsToUpdate = [req.body.newLabel];
+
+  if (req.body.blocked == 'true') {
+    labelsToUpdate.push('blocked');
+  }
+  
   var body = {
-    labels: [req.body.newLabel]
+    labels: labelsToUpdate
   };
+
   var request = new Request(
     '/repos/' + config.githubUser + '/' + repoName + '/issues/' + issueNumber,
     'PATCH',
