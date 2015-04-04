@@ -155,9 +155,10 @@ function _addMenu() {
       '<i class="fa fa-bars fa-sm"></i>' +
     '</a>' +
     '<ul class="dropdown-menu" role="menu" aria-labelledby="menu-dropdown">' +
+      '<li role="presentation" class="dropdown-header">'+ window.location.pathname.split('/')[3] +'</li>' +
       '<li role="presentation"><a role="menuitem" tabindex="-1" href="/repos">Repository search</a></li>' +
-      '<li role="presentation"><a role="menuitem" tabindex="-1" href="/logout">Logout</a></li>' +
       '<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Retrospective reminders</a></li>' +
+      '<li role="presentation"><a role="menuitem" tabindex="-1" href="/logout">Logout</a></li>' +
     '</ul>'
   );
 }
