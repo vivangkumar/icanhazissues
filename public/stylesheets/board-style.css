@@ -189,3 +189,15 @@ a:hover {
   color: #41A9BD;
   background-color: inherit;
 }
+
+.retro-modal {
+  color: black;
+}
+
+.retro-reminders-form {
+  margin-top: 20px;
+}
+
+#retro-add-button {
+  margin-top: 10px;
+}

@@ -50,20 +50,25 @@ block content
                       li(class='list-group-item issue-list-item' data-created='#{i.createdAt}' data-issue-number='#{i.issueNumber}' id='#{k}-#{i.issueNumber}')
                         block card
                           
-  div(class='modal fade' id='retrospective-modal' tabindex='-1' role='dialog' aria-labelledby='retro-modal' aria-hidden='true')
+  div(class='modal fade retro-modal' id='retrospective-modal' tabindex='-1' role='dialog' aria-labelledby='retro-modal' aria-hidden='true')
     div(class='modal-dialog')
       div(class='modal-content')
         div(class='modal-header')
           button(type='button' class='close' data-dismiss='modal' aria-label='Close')
             span(aria-hidden='true')&times;
-          h4(class='modal-title') Modal title
+          h4(class='modal-title') Retrospective Reminders
         
-        div(class='modal-body')
-          p Body
-        
+        div(class='modal-body retro-modal-body')
+          div(class='retro-reminders')
+          div(class='retro-reminders-edit')
+            button(type='button' class='btn btn-default retro-form-button') Add a reminder
+            div(class='retro-reminders-form')
+              form(class='form')
+                textarea(class='form-control' rows="3" id='retro-reminder-text' placeholder='Add a reminder..' required)
+                button(id='retro-add-button' class='btn btn-default') Save
+                
         div(class='modal-footer')
           button(type='button' class='btn btn-default' data-dismiss='modal') Close
-          button(type='button' class='btn btn-primary') Save changes
 
 
   script.

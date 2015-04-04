@@ -107,7 +107,7 @@ function updateIssue(issueNumber, oldLabel, newLabel, blocked) {
  * Get colours for issues based on date.
  * @param date
  */
-function _getColourCode(date) {
+function getColourCode(date) {
   var date = new Date(date);
   var now = new Date();
   var diff = now - date;
@@ -129,9 +129,9 @@ function _getColourCode(date) {
  * Assign colour codes using border bottom
  * to each element with class `.issue-list-item`
  */
-function _assignColourCode() {
+function assignColourCode() {
   $('.issue-list-item').each(function() {
-    var colourCode = _getColourCode($(this).attr('data-created'));
+    var colourCode = getColourCode($(this).attr('data-created'));
     $(this).css('border-bottom-width', '5px').css('border-bottom-color', colourCode);
   });
 }
@@ -139,7 +139,7 @@ function _assignColourCode() {
 /**
  * Look for issues that are blocked and add a label.
  */
-function _addBlockedLabel() {
+function addBlockedLabel() {
   $('.issue-list-item[data-blocked="true"]').each(function() {
     var label = '<span class="label label-danger">BLOCKED</span>'
     $(this).find('.issue-text').append("  " + label);
@@ -149,7 +149,7 @@ function _addBlockedLabel() {
 /**
  * Add a menu button with a dropdown
  */
-function _addMenu() {
+function addMenu() {
   $('.heading-column:first-child').append(
     '<a class="menu-button pull-left" data-toggle="dropdown" id="menu-dropdown">' +
       '<i class="fa fa-bars fa-sm"></i>' +
@@ -171,7 +171,7 @@ function _addMenu() {
  * We want the add new issue button appended to the last child
  * of the heading columns
  */
-function _addNewIssueButton() {
+function addNewIssueButton() {
   $('.heading-column:last-child').append(
     '<a class="add-issue-button pull-right" target="_blank" href="'+ newIssueUrl +'">' +
       '<i class="fa fa-plus fa-sm"></i>' +
@@ -179,9 +179,21 @@ function _addNewIssueButton() {
   );
 }
 
+function hideRetroForm() {
+  $('.retro-reminders-form').hide();
+}
+
+function toggleRetroForm() {
+  $('.retro-form-button').click(function() {
+    $('.retro-reminders-form').toggle();
+  });
+}
+
 $(window).load(function() {
-  _addMenu();
-  _addNewIssueButton();
-  _assignColourCode();
-  _addBlockedLabel();
+  addMenu();
+  addNewIssueButton();
+  assignColourCode();
+  addBlockedLabel();
+  hideRetroForm();
+  toggleRetroForm();
 });
