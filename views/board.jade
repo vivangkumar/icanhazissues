@@ -30,6 +30,8 @@ block content
     div(class='container-fluid heading-container')
       each col in columns
         div(class='col-md-3 heading-column') #{col}
+  div(class='retrospective-bar col-md-12')
+    a(href='#' data-toggle='modal' data-target='#retrospective-modal') Retrospective Reminders
 
   each val, key in issues
     div(class='container-fluid')
@@ -59,13 +61,6 @@ block content
           h4(class='modal-title') Retrospective Reminders
         
         div(class='modal-body retro-modal-body')
-          div(class='retro-reminders')
-          div(class='retro-reminders-edit')
-            button(type='button' class='btn btn-default retro-form-button') Add a reminder
-            div(class='retro-reminders-form')
-              form(class='form')
-                textarea(class='form-control' rows="3" id='retro-reminder-text' placeholder='Add a reminder..' required)
-                button(id='retro-add-button' class='btn btn-default') Save
                 
         div(class='modal-footer')
           button(type='button' class='btn btn-default' data-dismiss='modal') Close

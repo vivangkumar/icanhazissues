@@ -157,11 +157,6 @@ function addMenu() {
     '<ul class="dropdown-menu" role="menu" aria-labelledby="menu-dropdown">' +
       '<li role="presentation" class="dropdown-header">'+ repositoryName +'</li>' +
       '<li role="presentation"><a role="menuitem" tabindex="-1" href="/repos">Repository search</a></li>' +
-      '<li role="presentation">' +
-        '<a role="menuitem" href="#" data-toggle="modal" data-target="#retrospective-modal">' +
-          'Retrospective reminders' +
-        '</a>' +
-      '</li>' +
       '<li role="presentation"><a role="menuitem" tabindex="-1" href="/logout">Logout</a></li>' +
     '</ul>'
   );
@@ -177,16 +172,6 @@ function addNewIssueButton() {
       '<i class="fa fa-plus fa-sm"></i>' +
     '</a>'
   );
-}
-
-function hideRetroForm() {
-  $('.retro-reminders-form').hide();
-}
-
-function toggleRetroForm() {
-  $('.retro-form-button').click(function() {
-    $('.retro-reminders-form').toggle();
-  });
 }
 
 $(window).load(function() {

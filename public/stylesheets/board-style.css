@@ -201,3 +201,12 @@ a:hover {
 #retro-add-button {
   margin-top: 10px;
 }
+
+.retrospective-bar {
+  height: 20px;
+  background-color: #41A9BD;
+  text-align: center;
+  color: #34495E;
+  margin-top: -3px;
+  font-size: 14px;
+}
