@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var Request = require('../lib/request');
+var Eventinator = require('../lib/eventinator');
 
 var config = CONFIG;
 
@@ -12,7 +13,7 @@ router.post('/:repo/update/:issue', function(req, res, next) {
   if (req.body.blocked == 'true') {
     labelsToUpdate.push('blocked');
   }
-  
+
   var body = {
     labels: labelsToUpdate
   };
@@ -73,6 +74,24 @@ function _postIssueComment(data) {
       throw 'Error posting comment. Code: ' + response.statusCode + ' Body: '+ JSON.stringify(body);
     }
   });
+}
+
+/**
+ * Send issue changes to Eventinator.
+ * @param details
+ */
+function _sendToEventinator(details) {
+  var eventDetails = {
+    issue: {
+      num: details.issueNumber,
+      title: details.issueTitle,
+      old_state: details.oldLabel,
+      new_state: details.newLabel
+    },
+    user: details.githubUser
+  };
+  var eventinator = new Eventinator('change_issue', eventDetails);
+  eventinator.record();
 }
 
 module.exports = router;
