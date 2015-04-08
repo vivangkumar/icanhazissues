@@ -56,10 +56,10 @@ for(var i = 0; i < issueGroups.length; i++) {
 
       // Card that is to me updated and synced
       var cardMoved = {
-        "issueNumber": issueNumber,
-        "milestone": toMilestone,
-        "fromLabel": fromLabel,
-        "toLabel": toLabel,
+        issueNumber: issueNumber,
+        milestone: toMilestone,
+        fromLabel: fromLabel,
+        toLabel: toLabel,
       };
 
       if(fromLabel != toLabel && fromMilestone == toMilestone) {
@@ -97,7 +97,6 @@ function updateIssue(issueNumber, oldLabel, newLabel, blocked) {
       console.log(msg);
     },
     error: function(error) {
-
       console.log('Error: ' + JSON.parse(error));
     }
   });
@@ -179,6 +178,4 @@ $(window).load(function() {
   addNewIssueButton();
   assignColourCode();
   addBlockedLabel();
-  hideRetroForm();
-  toggleRetroForm();
 });
