@@ -35,6 +35,19 @@ function isAuthenticated(req) {
   return false;
 }
 
+/**
+ * Get currently logged in user details.
+ * @param token
+ */
+function _getUserDetails(token) {
+  return new Request(
+    '/user',
+    'GET',
+    {Authorization: 'token ' + token},
+    null
+  );
+}
+
 /* Home page */
 router.get('/', function(req, res, next) {
   if (!isAuthenticated(req)) {
@@ -47,9 +60,12 @@ router.get('/', function(req, res, next) {
 /**
  * Request a Github OAuth access token.
  * It is then set in the cookies.
+ * TODO Use a middleware pattern here to get
+ * OAuth token and then set the user cookie
  */
 router.get('/login', function(req, res, next) {
   var query = qs.parse(req.url.split('?')[1]);
+
   auth.getOAuthAccessToken(
     query.code,
     {'redirect_uri': process.env.GITHUB_OAUTH_REDIRECT_URI},
@@ -65,7 +81,8 @@ router.get('/login', function(req, res, next) {
           {
             maxAge: 2592000000,
             signed: true
-          });
+          }
+        );
         res.redirect('/');
       }
     }
