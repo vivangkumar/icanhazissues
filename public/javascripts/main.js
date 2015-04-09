@@ -21,10 +21,10 @@ channel.bind('client-issue-updates', function(data) {
 
 var issueGroups = document.getElementsByClassName('issue-list-group');
 var repositoryName = window.location.pathname.split('/')[3];
-var fromLabel = ""
-  , toLabel = ""
-  , fromMilestone = ""
-  , toMilestone = "";
+var fromLabel = "";
+var toLabel = "";
+var fromMilestone = "";
+var toMilestone = "";
 
 for(var i = 0; i < issueGroups.length; i++) {
   var issueMilestone = issueGroups[i].getAttribute('data-milestone');
