@@ -44,6 +44,7 @@ for(var i = 0; i < issueGroups.length; i++) {
     },
     onEnd: function(event) {
       var issueNumber = event.item.getAttribute('data-issue-number');
+      var issueTitle = event.item.getElementsByTagName('a')[0].innerHTML;
       var parentNode = event.item.parentNode;
       var blocked = false;
 
@@ -57,6 +58,7 @@ for(var i = 0; i < issueGroups.length; i++) {
       // Card that is to me updated and synced
       var cardMoved = {
         issueNumber: issueNumber,
+        issueTitle: issueTitle,
         milestone: toMilestone,
         fromLabel: fromLabel,
         toLabel: toLabel,
@@ -67,7 +69,7 @@ for(var i = 0; i < issueGroups.length; i++) {
         cardMoved['cardHtml'] = event.item.outerHTML;
         // Trigger pusher event and update issue on github
         channel.trigger('client-issue-updates', cardMoved);
-        updateIssue(issueNumber, fromLabel, toLabel, blocked);
+        updateIssue(issueNumber, fromLabel, toLabel, blocked, issueTitle);
       }
     }
   });
@@ -81,9 +83,10 @@ for(var i = 0; i < issueGroups.length; i++) {
  * @param blocked
  * @returns boolean
  */
-function updateIssue(issueNumber, oldLabel, newLabel, blocked) {
+function updateIssue(issueNumber, oldLabel, newLabel, blocked, issueTitle) {
   var ISSUE_ENDPOINT = '/issues/' + repositoryName + '/update/' +issueNumber;
   var data = {
+    issueTitle: issueTitle,
     oldLabel: oldLabel,
     newLabel: newLabel,
     blocked: blocked

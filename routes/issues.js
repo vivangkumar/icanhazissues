@@ -7,6 +7,7 @@ var config = CONFIG;
 
 router.post('/:repo/update/:issue', function(req, res, next) {
   var issueNumber = req.params.issue;
+  var issueTitle = req.body.issueTitle;
   var repoName = req.params.repo;
   var labelsToUpdate = [req.body.newLabel];
 
@@ -40,6 +41,7 @@ router.post('/:repo/update/:issue', function(req, res, next) {
         oldLabel: req.body.oldLabel,
         newLabel: req.body.newLabel
       };
+
       var eventData = {
         issue: {
           num: issueNumber,
@@ -49,9 +51,10 @@ router.post('/:repo/update/:issue', function(req, res, next) {
         },
         user: githubUser
       };
+
       try {
         _postIssueComment(commentData);
-        _sendToEventinator(eventData);
+        //_sendToEventinator(eventData);
       } catch (ex) {
         console.log(ex);
       }
@@ -92,7 +95,17 @@ function _postIssueComment(data) {
  */
 function _sendToEventinator(details) {
   var eventinator = new Eventinator('change_issue', details);
-  eventinator.record();
+  eventinator.record(function(error, response, body) {
+    if (error) {
+      throw error;
+    }
+
+    if (response.statusCode == 200) {
+      console.log('Event sent to Eventinator');
+    } else {
+      throw 'Unexpected HTTP code from Eventinator: ' + response.statusCode;
+    }
+  });
 }
 
 module.exports = router;
