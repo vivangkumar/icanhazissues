@@ -18,7 +18,8 @@ try {
     "githubUser": process.env.GITHUB_USER,
     "pusherAppId": process.env.PUSHER_APP_ID,
     "pusherKey": process.env.PUSHER_KEY,
-    "pusherSecret": process.env.PUSHER_SECRET
+    "pusherSecret": process.env.PUSHER_SECRET,
+    "eventinatorKey": process.env.EVENTINATOR_KEY
   }
 }
 
