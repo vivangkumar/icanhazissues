@@ -49,7 +49,7 @@ router.post('/:repo/update/:issue', function(req, res, next) {
           old_state: req.body.oldLabel,
           new_state:  req.body.newLabel
         },
-        user: githubUser
+        user: req.cookies.githubUser
       };
 
       try {
