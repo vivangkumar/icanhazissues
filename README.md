@@ -31,7 +31,8 @@ This is a rewrite of the [original version](https://github.com/pusher/icanhaziss
       "githubUser": "github user name/ org name",
       "pusherAppId": "pusher app id",
       "pusherKey": "pusher key",
-      "pusherSecret": "pusher secret"
+      "pusherSecret": "pusher secret",
+      "eventinatorKey": "eventinator key"
     }
 
     ```
@@ -44,6 +45,7 @@ This is a rewrite of the [original version](https://github.com/pusher/icanhaziss
     PUSHER_APP_ID
     PUSHER_KEY
     PUSHER_SECRET
+    EVENTINATOR_KEY
     GITHUB_OAUTH_REDIRECT_URI
     ```
 - Run `GITHUB_OAUTH_REDIRECT_URI='HOSTNAME:PORT' node ./bin/www` to run the express app.
