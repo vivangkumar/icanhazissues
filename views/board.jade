@@ -30,8 +30,12 @@ block content
     div(class='container-fluid heading-container')
       each col in columns
         div(class='col-md-3 heading-column') #{col}
-  div(class='retrospective-bar col-md-12')
-    a(href='#' data-toggle='modal' data-target='#retrospective-modal') Retrospective Reminders
+        
+  if retrospectiveReminders && retrospectiveReminders.length <= 3
+    div(class='retrospective-bar col-md-12')
+      each reminder in retrospectiveReminders
+        div(class='col-md-4 retrospective-reminders')
+          |#{reminder}
 
   each val, key in issues
     div(class='container-fluid')
@@ -51,20 +55,6 @@ block content
                     else
                       li(class='list-group-item issue-list-item' data-created='#{i.createdAt}' data-issue-number='#{i.issueNumber}' id='#{k}-#{i.issueNumber}')
                         block card
-                          
-  div(class='modal fade retro-modal' id='retrospective-modal' tabindex='-1' role='dialog' aria-labelledby='retro-modal' aria-hidden='true')
-    div(class='modal-dialog')
-      div(class='modal-content')
-        div(class='modal-header')
-          button(type='button' class='close' data-dismiss='modal' aria-label='Close')
-            span(aria-hidden='true')&times;
-          h4(class='modal-title') Retrospective Reminders
-        
-        div(class='modal-body retro-modal-body')
-                
-        div(class='modal-footer')
-          button(type='button' class='btn btn-default' data-dismiss='modal') Close
-
 
   script.
     var pusherKey = '#{pusherKey}';

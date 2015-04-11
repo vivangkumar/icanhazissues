@@ -191,23 +191,11 @@ a:hover {
   background-color: inherit;
 }
 
-.retro-modal {
-  color: black;
-}
-
-.retro-reminders-form {
-  margin-top: 20px;
-}
-
-#retro-add-button {
-  margin-top: 10px;
-}
-
 .retrospective-bar {
   height: 20px;
   background-color: #41A9BD;
   text-align: center;
-  color: #34495E;
+  color: white;
   margin-top: -3px;
   font-size: 14px;
 }

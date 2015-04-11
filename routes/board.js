@@ -16,6 +16,8 @@ var config = CONFIG;
  */
 function _categorizeIssues(issues, milestones) {
   var categorizedIssues =  {};
+  var retrospectiveReminders = [];
+
   for (m in milestones) {
     if (milestones.length == 1 && milestones[0] == 'uncategorized') {
       categorizedIssues[milestones[0]] = {};
@@ -43,9 +45,16 @@ function _categorizeIssues(issues, milestones) {
         }
       }
     }
+
+    if (_checkLabelMatches(issues[i], 'retrospective')) {
+      retrospectiveReminders.push(issues[i].title);
+    }
   }
 
-  return categorizedIssues;
+  return {
+    categorizedIssues: categorizedIssues,
+    retrospectiveReminders: retrospectiveReminders
+  };
 }
 
 /**
@@ -110,13 +119,14 @@ router.get('/:user/:repo', function(req, res, next) {
       }
 
       var categorizedIssues = _categorizeIssues(issueList, milestones.getAll());
-
+      
       res.render('board', {
-        issues: categorizedIssues,
+        issues: categorizedIssues.categorizedIssues,
         milestones: milestones,
         columns: config.boardColumns,
         pusherKey: config.pusherKey,
-        newIssueUrl: 'https://github.com/' + config.githubUser + '/' + repoName + '/issues/new'
+        newIssueUrl: 'https://github.com/' + config.githubUser + '/' + repoName + '/issues/new',
+        retrospectiveReminders: categorizedIssues.retrospectiveReminders
       });
     } else {
       res.render('error', {
