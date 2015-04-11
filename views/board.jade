@@ -31,10 +31,10 @@ block content
       each col in columns
         div(class='col-md-3 heading-column') #{col}
         
-  if retrospectiveReminders && retrospectiveReminders.length <= 3
+  if retrospectiveReminders && retrospectiveReminders.length <= 5
     div(class='retrospective-bar col-md-12')
       each reminder in retrospectiveReminders
-        div(class='col-md-4 retrospective-reminders')
+        div(class='col-md-3 retrospective-reminders')
           |#{reminder}
 
   each val, key in issues

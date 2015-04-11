@@ -193,9 +193,15 @@ a:hover {
 
 .retrospective-bar {
   height: 20px;
-  background-color: #41A9BD;
+  background-color: #03A678;
   text-align: center;
   color: white;
   margin-top: -3px;
   font-size: 14px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.retrospective-reminders {
+  width: 20%;
 }
