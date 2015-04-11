@@ -4,8 +4,8 @@ var OAuth = require('oauth').OAuth2;
 var qs = require('querystring');
 var Request = require('../lib/request');
 
-/* Config file */
 var config = CONFIG;
+var githubAccessToken;
 
 var auth = new OAuth(
   config.githubClientId,
@@ -35,6 +35,37 @@ function isAuthenticated(req) {
   return false;
 }
 
+/**
+ * Get currently logged in user details.
+ * @param token
+ */
+function _getUserDetails(token) {
+  return new Request(
+    '/user',
+    'GET',
+    {Authorization: 'token ' + token},
+    null
+  );
+}
+
+/**
+ * Set cookies.
+ * @param res
+ * @param key
+ * @param value
+ * @param signed
+ */
+function _setCookie(res, key, value, signed) {
+  res.cookie(
+    key,
+    value,
+    {
+      maxAge: 2592000000,
+      signed: signed
+    }
+  );
+}
+
 /* Home page */
 router.get('/', function(req, res, next) {
   if (!isAuthenticated(req)) {
@@ -50,32 +81,50 @@ router.get('/', function(req, res, next) {
  */
 router.get('/login', function(req, res, next) {
   var query = qs.parse(req.url.split('?')[1]);
+
   auth.getOAuthAccessToken(
     query.code,
     {'redirect_uri': process.env.GITHUB_OAUTH_REDIRECT_URI},
     function(error, accessToken, refreshToken, results) {
       if (error) {
+        console.log(error);
         res.status(500).send(JSON.stringify({error: error}));
       } else if (results.error) {
+        console.log(results.error);
         res.status(401).send(JSON.stringify(results));
       } else {
-        res.cookie(
-          'accessToken',
-          accessToken,
-          {
-            maxAge: 2592000000,
-            signed: true
-          });
-        res.redirect('/');
+        githubAccessToken = accessToken;
+        // Go on to next handler
+        next();
       }
     }
   )
+}, function(req, res) {
+  var userDetails = _getUserDetails(githubAccessToken);
+  userDetails.do(function(error, response, body) {
+    if (error) {
+      console.log(error);
+      res.status(500).send(JSON.stringify({error: error}));
+    }
+
+    if (response.statusCode != 200) {
+      console.log('Unexpected response from Github ' + response.statusCode);
+      res.status(response.StatusCode).send(JSON.stringify({error: body}));
+    } else {
+      var githubUser = JSON.parse(body).login;
+      _setCookie(res, 'accessToken', githubAccessToken, true);
+      _setCookie(res, 'githubUser', githubUser, false);
+
+      res.redirect('/');
+    }
+  })
 });
 
 /* Logout and destroy the session */
 router.get('/logout', function(req, res, next) {
   req.session = null;
   res.clearCookie('accessToken');
+  res.clearCookie('githubUser');
   res.render('logout');
 });
 
