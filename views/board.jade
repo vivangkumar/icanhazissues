@@ -16,7 +16,7 @@ block content
   - var dash = function(text) {
   -  return text.replace(/ /g, '-');
   -}
-  
+
   - // Check for blocked issues
   - var blocked = function _checkLabelMatches(issue) {
   -  for(var i = 0; i < issue.label.length; i++) {
@@ -27,15 +27,15 @@ block content
   - }
 
   nav(class='navbar navbar-default navbar-fixed-top board-navbar')
-    div(class='container-fluid heading-container')
-      each col in columns
-        div(class='col-md-3 heading-column') #{col}
-        
-  if retrospectiveReminders.length > 0 && retrospectiveReminders.length <= 5
-    div(class='retrospective-bar col-md-12')
-      each reminder in retrospectiveReminders
-        div(class='col-md-3 retrospective-reminders')
-          |#{reminder}
+    div(class='container-fluid retrospective-container')
+      if retrospectiveReminders.length > 0
+        div(class='retrospective-bar col-md-12')
+          | Retro reminders:&nbsp;
+          each reminder in retrospectiveReminders
+            | #{reminder}&nbsp;&bull;&nbsp;
+      div(class='container-fluid heading-container')
+        each col in columns
+          div(class='col-md-3 heading-column') #{col}
 
   each val, key in issues
     div(class='container-fluid')
