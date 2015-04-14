@@ -57,7 +57,7 @@ router.post('/:repo/update/:issue', function(req, res, next) {
         // Send to Eventinator only if production
         if (process.env.NODE_ENV == 'production') {
           console.log('Sending ' + eventData + ' to Eventinator');
-          _sendToEventinator(eventData);
+          //_sendToEventinator(eventData);
         }
       } catch (ex) {
         console.log(ex);
