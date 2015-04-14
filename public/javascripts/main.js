@@ -134,7 +134,7 @@ function getColourCode(date) {
 function assignColourCode() {
   $('.issue-list-item').each(function() {
     var colourCode = getColourCode($(this).attr('data-created'));
-    $(this).css('border-bottom-width', '5px').css('border-bottom-color', colourCode);
+    $(this).css('border-left-width', '5px').css('border-left-color', colourCode);
   });
 }
 
