@@ -11,6 +11,16 @@ block card
     div(class='issue-text col-xs-12')
       a(href='#{i.url}' target='_blank') #{i.title}
 
+block done-bucket
+  li(class='list-group-item done-bucket')
+    div(class='bucket')
+      if v.length == 1
+        span(class='badge') 1
+        |&nbsp; task in the done column
+      else
+        span(class='badge') #{v.length}
+        |&nbsp; tasks in the done column
+
 block content
   - // Replace all spaces with a `-` when naming classes
   - var dash = function(text) {
@@ -47,13 +57,16 @@ block content
             div(class='panel board-panel panel-default')
               div(class='panel-heading board-panel-heading')
               div(class='panel-body board-panel-body')
-                ul(class='list-group issue-list-group #{dash(key)}-#{k}-list-group' data-label='#{k}' data-milestone='#{key}')
+                ul(class='list-group issue-list-group #{dash(key)}-#{k}-list-group' data-count=v.length data-label='#{k}' data-milestone='#{key}')
                   each i in v
+                    if (k == 'done')
+                      block done-bucket
+
                     if blocked(i)
-                      li(class='list-group-item issue-list-item' data-created='#{i.createdAt}' data-blocked='true' data-issue-number='#{i.issueNumber}' id='#{k}-#{i.issueNumber}')
+                      li(class='list-group-item issue-list-item issue-list-item-#{k}' data-created='#{i.createdAt}' data-blocked='true' data-issue-number='#{i.issueNumber}' id='#{k}-#{i.issueNumber}')
                         block card
                     else
-                      li(class='list-group-item issue-list-item' data-created='#{i.createdAt}' data-issue-number='#{i.issueNumber}' id='#{k}-#{i.issueNumber}')
+                      li(class='list-group-item issue-list-item issue-list-item-#{k}' data-created='#{i.createdAt}' data-issue-number='#{i.issueNumber}' id='#{k}-#{i.issueNumber}')
                         block card
 
   script.

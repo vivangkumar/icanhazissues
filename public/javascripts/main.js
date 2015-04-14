@@ -159,6 +159,7 @@ function addMenu() {
     '<ul class="dropdown-menu" role="menu" aria-labelledby="menu-dropdown">' +
       '<li role="presentation" class="dropdown-header">'+ repositoryName +'</li>' +
       '<li role="presentation"><a role="menuitem" tabindex="-1" href="/repos">Repository search</a></li>' +
+      '<li role="presentation"><a class="toggle-done" role="menuitem" tabindex="-1" href="#">Toggle done items</a></li>' +
       '<li role="presentation"><a role="menuitem" tabindex="-1" href="/logout">Logout</a></li>' +
     '</ul>'
   );
@@ -176,9 +177,37 @@ function addNewIssueButton() {
   );
 }
 
+function toggleDoneColumn() {
+  $('.toggle-done').click(function() {
+    if (localStorage.doneColumn == 0) {
+      localStorage.doneColumn = 1;
+    } else {
+      localStorage.doneColumn = 0;
+    }
+
+    $('.issue-list-item-done').toggle();
+    $('.done-bucket').toggle();
+    if ($(this).css('color') == 'rgb(3, 166, 120)') {
+      $(this).css('color', 'white');
+    } else {
+      $(this).css('color', '#03A678');
+    }
+  });
+}
+
+function retainPreviousSetting() {
+  if (localStorage.doneColumn == 1) {
+    $('.done-bucket').css('display', 'block');
+    $('.issue-list-item-done').hide();
+    $('.toggle-done').css('color', '#03A678');
+  }
+}
+
 $(window).load(function() {
   addMenu();
   addNewIssueButton();
   assignColourCode();
   addBlockedLabel();
+  toggleDoneColumn();
+  retainPreviousSetting();
 });
