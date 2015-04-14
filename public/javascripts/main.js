@@ -179,10 +179,10 @@ function addNewIssueButton() {
 
 function toggleDoneColumn() {
   $('.toggle-done').click(function() {
-    if (localStorage.doneColumn == 0) {
-      localStorage.doneColumn = 1;
+    if (localStorage.doneColumn == 'false') {
+      localStorage.doneColumn = 'true';
     } else {
-      localStorage.doneColumn = 0;
+      localStorage.doneColumn = 'false';
     }
 
     $('.issue-list-item-done').toggle();
@@ -196,7 +196,7 @@ function toggleDoneColumn() {
 }
 
 function retainPreviousSetting() {
-  if (localStorage.doneColumn == 1) {
+  if (localStorage.doneColumn == 'false') {
     $('.done-bucket').css('display', 'block');
     $('.issue-list-item-done').hide();
     $('.toggle-done').css('color', '#03A678');
