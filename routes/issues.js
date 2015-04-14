@@ -52,15 +52,10 @@ router.post('/:repo/update/:issue', function(req, res, next) {
         user: req.cookies.githubUser
       };
 
-      try {
-        _postIssueComment(commentData);
-        // Send to Eventinator only if production
-        if (process.env.NODE_ENV == 'production') {
-          console.log('Sending ' + eventData + ' to Eventinator');
-          //_sendToEventinator(eventData);
-        }
-      } catch (ex) {
-        console.log(ex);
+      _postIssueComment(commentData);
+      if (process.env.NODE_ENV == 'production') {
+        console.log('Sending ' + eventData + ' to Eventinator');
+        _sendToEventinator(eventData);
       }
     } else {
       res.status(response.statusCode).send(JSON.stringify({error: 'There was an error updating the issue'}));
@@ -82,13 +77,13 @@ function _postIssueComment(data) {
 
   request.do(function(error, response, body) {
     if (error) {
-      throw error;
+      console.log(error);
     }
 
     if (response.statusCode == 201) {
       console.log('Issue comment added.');
     } else {
-      throw 'Error posting comment. Code: ' + response.statusCode + ' Body: '+ JSON.stringify(body);
+      console.log('Error posting comment. Code: ' + response.statusCode + ' Body: '+ JSON.stringify(body));
     }
   });
 }
@@ -101,13 +96,13 @@ function _sendToEventinator(details) {
   var eventinator = new Eventinator('change_issue', details);
   eventinator.record(function(error, response, body) {
     if (error) {
-      throw error;
+      console.log(error);
     }
 
     if (response.statusCode == 200) {
       console.log('Event sent to Eventinator');
     } else {
-      throw 'Unexpected HTTP code from Eventinator: ' + response.statusCode;
+      console.log('Unexpected HTTP code from Eventinator: ' + response.statusCode);
     }
   });
 }
