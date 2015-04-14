@@ -65,7 +65,25 @@ for(var i = 0; i < issueGroups.length; i++) {
       };
 
       if(fromLabel != toLabel && fromMilestone == toMilestone) {
+        if (toLabel == 'done') {
+          if (localStorage.doneColumn == 'false') {
+            event.item.style.display = 'none';
+          }
+
+          event.item.classList.add('issue-list-item-done');
+          event.item.classList.remove('issue-list-item-' + fromLabel);
+        }
+
+        if (fromLabel == 'done') {
+          event.item.classList.remove('issue-list-item-done');
+          event.item.classList.add('issue-list-item-' + toLabel);
+        }
+        var toCount = parseInt(parentNode.getAttribute('data-count'));
+        parentNode.setAttribute('data-count', toCount + 1);
+        var fromCount = parseInt(document.getElementsByClassName(fromMilestone + "-" + fromLabel + "-" + "list-group")[0].getAttribute('data-count'));
+        document.getElementsByClassName(fromMilestone + "-" + fromLabel + "-" + "list-group")[0].setAttribute('data-count', fromCount - 1);
         event.item.setAttribute('id', toLabel + '-' + issueNumber);
+
         cardMoved['cardHtml'] = event.item.outerHTML;
         // Trigger pusher event and update issue on github
         channel.trigger('client-issue-updates', cardMoved);

@@ -14,7 +14,7 @@ block card
 block done-bucket
   li(class='list-group-item done-bucket')
     div(class='bucket')
-      span(class='badge') #{v.length}
+      span(class='badge #{key}-done-badge') #{v.length}
 
 block content
   - // Replace all spaces with a `-` when naming classes
