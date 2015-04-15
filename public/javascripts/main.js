@@ -4,7 +4,7 @@
 
 /** PUSHER **/
 var pusher = new Pusher(pusherKey, {
- authEndpoint: '/pusher/auth'
+  authEndpoint: '/pusher/auth'
 });
 
 var channel = pusher.subscribe('private-issues');

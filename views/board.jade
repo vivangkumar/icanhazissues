@@ -23,7 +23,7 @@ block content
   -}
 
   - // Check for blocked issues
-  - var blocked = function _checkLabelMatches(issue) {
+  - var blocked = function (issue) {
   -  for(var i = 0; i < issue.label.length; i++) {
   -    if (issue.label[i].name == 'blocked') {
   -      return true;
