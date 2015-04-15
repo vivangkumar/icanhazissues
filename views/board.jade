@@ -12,7 +12,7 @@ block card
       a(href='#{i.url}' target='_blank') #{i.title}
 
 block done-bucket
-  li(class='list-group-item done-bucket')
+  li(class='list-group-item done-bucket' draggable='false')
     div(class='bucket')
       span(class='badge #{dash(key)}-done-badge') #{v.length}
 

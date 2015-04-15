@@ -13,7 +13,7 @@ channel.bind('client-issue-updates', function(data) {
   var cardToRemove = '#'+ data.fromLabel + '-' + data.issueNumber;
   $(cardToRemove).remove();
 
-  var milestoneClass = '.' + data.milestone.replace(/ /g, '-') + '-' + data.toLabel + '-list-group';
+  var milestoneClass = '.' + data.milestone + '-' + data.toLabel + '-list-group';
 
   // Append to the right list
   $(milestoneClass).append(data.cardHtml);
@@ -37,6 +37,7 @@ for(var i = 0; i < issueGroups.length; i++) {
     animation: 150,
     dragable: '.issue-list-item',
     ghostClass: 'sortable-ghost',
+    filter: '.done-bucket',
     onStart: function(event) {
       var parentNode = event.item.parentNode;
       fromLabel = parentNode.getAttribute('data-label');
@@ -182,7 +183,7 @@ function addMenu() {
     '<ul class="dropdown-menu" role="menu" aria-labelledby="menu-dropdown">' +
       '<li role="presentation" class="dropdown-header">'+ repositoryName +'</li>' +
       '<li role="presentation"><a role="menuitem" tabindex="-1" href="/repos">Repository search</a></li>' +
-      '<li role="presentation"><a class="toggle-done" role="menuitem" tabindex="-1" href="#">Toggle done items</a></li>' +
+      '<li role="presentation"><a class="toggle-done" role="menuitem" tabindex="-1" href="#">Show done items</a></li>' +
       '<li role="presentation"><a role="menuitem" tabindex="-1" href="/logout">Logout</a></li>' +
     '</ul>'
   );

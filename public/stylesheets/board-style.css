@@ -219,13 +219,17 @@ a:hover {
 
 .bucket {
   border-radius: 5px;
-  height: 25px;
   text-align: center;
   overflow: hidden;
   background-color: white;
   font-size: 14px;
+  padding-top: 9px;
 }
 
 .badge {
-  background-color: #59ABE3;
+  background-color: #E2E4E6;
+  min-height: 50px;
+  min-width: 50px;
+  border-radius: 50%;
+  font-size: 40px;
 }
