@@ -3,6 +3,7 @@ var router = express.Router();
 var Request = require('../lib/request');
 var Ds = require('node-data-structures');
 var Set = Ds.Set;
+var util = require('../lib/util');
 
 var config = CONFIG;
 
@@ -119,9 +120,10 @@ router.get('/:user/:repo', function(req, res, next) {
       }
 
       var categorizedIssues = _categorizeIssues(issueList, milestones.getAll());
-      
+      var sortedCategorizedIssues = util.sortObject(categorizedIssues.categorizedIssues);
+
       res.render('board', {
-        issues: categorizedIssues.categorizedIssues,
+        issues: sortedCategorizedIssues,
         milestones: milestones,
         columns: config.boardColumns,
         pusherKey: config.pusherKey,

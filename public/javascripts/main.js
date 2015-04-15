@@ -4,19 +4,46 @@
 
 /** PUSHER **/
 var pusher = new Pusher(pusherKey, {
- authEndpoint: '/pusher/auth'
+  authEndpoint: '/pusher/auth'
 });
 
 var channel = pusher.subscribe('private-issues');
 channel.bind('client-issue-updates', function(data) {
   // Remove old card before appending new one
   var cardToRemove = '#'+ data.fromLabel + '-' + data.issueNumber;
+  var fromLabel = data.fromLabel;
+  var toLabel = data.toLabel;
+  var toMilestone = data.toMilestone;
+  var fromMilestone = data.fromMilestone;
+  var fromCount = data.fromCount;
+  var toCount = data.toCount;
+
   $(cardToRemove).remove();
 
-  var milestoneClass = '.' + data.milestone.replace(/ /g, '-') + '-' + data.toLabel + '-list-group';
+  var milestoneClass = '.' + toMilestone + '-' + toLabel + '-list-group';
+
+  if (toLabel == 'done') {
+    console.log('.' + fromMilestone + '-' + fromLabel + '-list-group');
+    $('.' + toMilestone + '-done-badge').html(toCount);
+    $('.' + toMilestone + '-' + toLabel + '-list-group').attr('data-count', toCount);
+  }
+
+  if (fromLabel == 'done') {
+    console.log('.' + fromMilestone + '-' + fromLabel + '-list-group');
+    $('.' + fromMilestone + '-' + fromLabel + '-list-group').attr('data-count', fromCount);
+    $('.' + fromMilestone + '-done-badge').html(fromCount);
+  }
 
   // Append to the right list
   $(milestoneClass).append(data.cardHtml);
+  if (toLabel == 'done') {
+    var relevantCard = $('.issue-list-item[data-issue-number=' + data.issueNumber +']');
+    if (localStorage.doneColumn == 'false') {
+      relevantCard.css('display', 'none');
+    } else {
+      relevantCard.css('display', 'block');
+    }
+  }
 });
 
 var issueGroups = document.getElementsByClassName('issue-list-group');
@@ -37,10 +64,11 @@ for(var i = 0; i < issueGroups.length; i++) {
     animation: 150,
     dragable: '.issue-list-item',
     ghostClass: 'sortable-ghost',
+    filter: '.done-bucket',
     onStart: function(event) {
       var parentNode = event.item.parentNode;
       fromLabel = parentNode.getAttribute('data-label');
-      fromMilestone = parentNode.getAttribute('data-milestone');
+      fromMilestone = parentNode.getAttribute('data-milestone').replace(/ /g, '-');
     },
     onEnd: function(event) {
       var issueNumber = event.item.getAttribute('data-issue-number');
@@ -49,24 +77,50 @@ for(var i = 0; i < issueGroups.length; i++) {
       var blocked = false;
 
       toLabel = parentNode.getAttribute('data-label');
-      toMilestone = parentNode.getAttribute('data-milestone');
+      toMilestone = parentNode.getAttribute('data-milestone').replace(/ /g, '-');
 
       if (event.item.getAttribute('data-blocked') == 'true') {
         blocked = true;
       }
 
-      // Card that is to me updated and synced
+      // Card that is to be updated and synced
       var cardMoved = {
         issueNumber: issueNumber,
         issueTitle: issueTitle,
-        milestone: toMilestone,
+        fromMilestone: fromMilestone,
+        toMilestone: toMilestone,
         fromLabel: fromLabel,
         toLabel: toLabel,
       };
 
       if(fromLabel != toLabel && fromMilestone == toMilestone) {
+        var toCount = parseInt(parentNode.getAttribute('data-count'));
+        parentNode.setAttribute('data-count', toCount + 1);
+
+        var fromCount = parseInt(document.getElementsByClassName(fromMilestone + "-" + fromLabel + "-list-group")[0].getAttribute('data-count'));
+        document.getElementsByClassName(fromMilestone + "-" + fromLabel + "-list-group")[0].setAttribute('data-count', fromCount - 1);
+
+        if (toLabel == 'done') {
+          if (localStorage.doneColumn == 'false') {
+            event.item.style.display = 'none';
+          }
+
+          $('.' + toMilestone + '-done-badge').html(toCount + 1);
+          event.item.classList.add('issue-list-item-done');
+          event.item.classList.remove('issue-list-item-' + fromLabel);
+        }
+
+        if (fromLabel == 'done') {
+          event.item.classList.remove('issue-list-item-done');
+          event.item.classList.add('issue-list-item-' + toLabel);
+          $('.' + fromMilestone + '-done-badge').html(fromCount - 1);
+        }
+
         event.item.setAttribute('id', toLabel + '-' + issueNumber);
+
         cardMoved['cardHtml'] = event.item.outerHTML;
+        cardMoved['fromCount'] = fromCount - 1;
+        cardMoved['toCount'] = toCount + 1;
         // Trigger pusher event and update issue on github
         channel.trigger('client-issue-updates', cardMoved);
         updateIssue(issueNumber, fromLabel, toLabel, blocked, issueTitle);
@@ -134,7 +188,7 @@ function getColourCode(date) {
 function assignColourCode() {
   $('.issue-list-item').each(function() {
     var colourCode = getColourCode($(this).attr('data-created'));
-    $(this).css('border-bottom-width', '5px').css('border-bottom-color', colourCode);
+    $(this).css('border-left-width', '5px').css('border-left-color', colourCode);
   });
 }
 
@@ -159,6 +213,7 @@ function addMenu() {
     '<ul class="dropdown-menu" role="menu" aria-labelledby="menu-dropdown">' +
       '<li role="presentation" class="dropdown-header">'+ repositoryName +'</li>' +
       '<li role="presentation"><a role="menuitem" tabindex="-1" href="/repos">Repository search</a></li>' +
+      '<li role="presentation"><a class="toggle-done" role="menuitem" tabindex="-1" href="#">Toggle done items</a></li>' +
       '<li role="presentation"><a role="menuitem" tabindex="-1" href="/logout">Logout</a></li>' +
     '</ul>'
   );
@@ -176,9 +231,37 @@ function addNewIssueButton() {
   );
 }
 
+function toggleDoneColumn() {
+  $('.toggle-done').click(function() {
+    if (localStorage.doneColumn == 'false') {
+      localStorage.doneColumn = 'true';
+    } else {
+      localStorage.doneColumn = 'false';
+    }
+
+    $('.issue-list-item-done').toggle();
+    $('.done-bucket').toggle();
+    if ($(this).css('color') == 'rgb(3, 166, 120)') {
+      $(this).css('color', 'white');
+    } else {
+      $(this).css('color', '#03A678');
+    }
+  });
+}
+
+function retainPreviousSetting() {
+  if (localStorage.doneColumn == 'false') {
+    $('.done-bucket').css('display', 'block');
+    $('.issue-list-item-done').hide();
+    $('.toggle-done').css('color', '#03A678');
+  }
+}
+
 $(window).load(function() {
   addMenu();
   addNewIssueButton();
   assignColourCode();
   addBlockedLabel();
+  toggleDoneColumn();
+  retainPreviousSetting();
 });

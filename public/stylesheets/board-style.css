@@ -62,7 +62,7 @@ a {
 }
 
 .issue-list-item {
-  margin: 5px;
+  margin: 1px;
   border-radius: 5px;
   font-size: 12px;
   text-align: left;
@@ -92,7 +92,7 @@ a {
   height: 100%;
   padding-right: 0px;
   padding-left: 0px;
-  width: 21.3%;
+  width: 18.3%;
 }
 
 .board-panel-heading {
@@ -167,7 +167,7 @@ a {
 }
 
 .col-xs-8 {
-  width: 78.6%;
+  width: 81.6%;
 }
 
 a:hover {
@@ -211,4 +211,26 @@ a:hover {
 .heading-container {
   padding-left: 5px;
   padding-right: 5px;
+}
+
+.done-bucket {
+  display: none;
+}
+
+.bucket {
+  border-radius: 5px;
+  text-align: center;
+  overflow: hidden;
+  background-color: white;
+  font-size: 14px;
+  padding-top: 9px;
+}
+
+.badge {
+  background-color: #E2E4E6;
+  min-height: 50px;
+  min-width: 50px;
+  border-radius: 50%;
+  font-size: 40px;
+  color: #41A9BD;
 }

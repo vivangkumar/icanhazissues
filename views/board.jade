@@ -11,6 +11,11 @@ block card
     div(class='issue-text col-xs-12')
       a(href='#{i.url}' target='_blank') #{i.title}
 
+block done-bucket
+  li(class='list-group-item done-bucket' draggable='false')
+    div(class='bucket')
+      span(class='badge #{dash(key)}-done-badge') #{v.length}
+
 block content
   - // Replace all spaces with a `-` when naming classes
   - var dash = function(text) {
@@ -18,7 +23,7 @@ block content
   -}
 
   - // Check for blocked issues
-  - var blocked = function _checkLabelMatches(issue) {
+  - var blocked = function (issue) {
   -  for(var i = 0; i < issue.label.length; i++) {
   -    if (issue.label[i].name == 'blocked') {
   -      return true;
@@ -43,17 +48,19 @@ block content
         div(class='milestone-heading')
           p(class='milestone-heading-text') #{key}
         each v, k in val
-          div(class='col-md-3 board-columns' id='#{key}-#{k}-column')
+          div(class='col-md-3 board-columns' id='#{dash(key)}-#{k}-column')
             div(class='panel board-panel panel-default')
               div(class='panel-heading board-panel-heading')
               div(class='panel-body board-panel-body')
-                ul(class='list-group issue-list-group #{dash(key)}-#{k}-list-group' data-label='#{k}' data-milestone='#{key}')
+                ul(class='list-group issue-list-group #{dash(key)}-#{k}-list-group' data-count=v.length data-label='#{k}' data-milestone='#{key}')
+                  if (k == 'done')
+                    block done-bucket
                   each i in v
                     if blocked(i)
-                      li(class='list-group-item issue-list-item' data-created='#{i.createdAt}' data-blocked='true' data-issue-number='#{i.issueNumber}' id='#{k}-#{i.issueNumber}')
+                      li(class='list-group-item issue-list-item issue-list-item-#{k}' data-created='#{i.createdAt}' data-blocked='true' data-issue-number='#{i.issueNumber}' id='#{k}-#{i.issueNumber}')
                         block card
                     else
-                      li(class='list-group-item issue-list-item' data-created='#{i.createdAt}' data-issue-number='#{i.issueNumber}' id='#{k}-#{i.issueNumber}')
+                      li(class='list-group-item issue-list-item issue-list-item-#{k}' data-created='#{i.createdAt}' data-issue-number='#{i.issueNumber}' id='#{k}-#{i.issueNumber}')
                         block card
 
   script.
