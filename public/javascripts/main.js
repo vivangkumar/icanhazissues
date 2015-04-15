@@ -11,12 +11,39 @@ var channel = pusher.subscribe('private-issues');
 channel.bind('client-issue-updates', function(data) {
   // Remove old card before appending new one
   var cardToRemove = '#'+ data.fromLabel + '-' + data.issueNumber;
+  var fromLabel = data.fromLabel;
+  var toLabel = data.toLabel;
+  var toMilestone = data.toMilestone;
+  var fromMilestone = data.fromMilestone;
+  var fromCount = data.fromCount;
+  var toCount = data.toCount;
+
   $(cardToRemove).remove();
 
-  var milestoneClass = '.' + data.milestone + '-' + data.toLabel + '-list-group';
+  var milestoneClass = '.' + toMilestone + '-' + toLabel + '-list-group';
+
+  if (toLabel == 'done') {
+    console.log('.' + fromMilestone + '-' + fromLabel + '-list-group');
+    $('.' + toMilestone + '-done-badge').html(toCount);
+    $('.' + toMilestone + '-' + toLabel + '-list-group').attr('data-count', toCount);
+  }
+
+  if (fromLabel == 'done') {
+    console.log('.' + fromMilestone + '-' + fromLabel + '-list-group');
+    $('.' + fromMilestone + '-' + fromLabel + '-list-group').attr('data-count', fromCount);
+    $('.' + fromMilestone + '-done-badge').html(fromCount);
+  }
 
   // Append to the right list
   $(milestoneClass).append(data.cardHtml);
+  if (toLabel == 'done') {
+    var relevantCard = $('.issue-list-item[data-issue-number=' + data.issueNumber +']');
+    if (localStorage.doneColumn == 'false') {
+      relevantCard.css('display', 'none');
+    } else {
+      relevantCard.css('display', 'block');
+    }
+  }
 });
 
 var issueGroups = document.getElementsByClassName('issue-list-group');
@@ -56,11 +83,12 @@ for(var i = 0; i < issueGroups.length; i++) {
         blocked = true;
       }
 
-      // Card that is to me updated and synced
+      // Card that is to be updated and synced
       var cardMoved = {
         issueNumber: issueNumber,
         issueTitle: issueTitle,
-        milestone: toMilestone,
+        fromMilestone: fromMilestone,
+        toMilestone: toMilestone,
         fromLabel: fromLabel,
         toLabel: toLabel,
       };
@@ -91,9 +119,11 @@ for(var i = 0; i < issueGroups.length; i++) {
         event.item.setAttribute('id', toLabel + '-' + issueNumber);
 
         cardMoved['cardHtml'] = event.item.outerHTML;
+        cardMoved['fromCount'] = fromCount - 1;
+        cardMoved['toCount'] = toCount + 1;
         // Trigger pusher event and update issue on github
         channel.trigger('client-issue-updates', cardMoved);
-        //updateIssue(issueNumber, fromLabel, toLabel, blocked, issueTitle);
+        updateIssue(issueNumber, fromLabel, toLabel, blocked, issueTitle);
       }
     }
   });
@@ -183,7 +213,7 @@ function addMenu() {
     '<ul class="dropdown-menu" role="menu" aria-labelledby="menu-dropdown">' +
       '<li role="presentation" class="dropdown-header">'+ repositoryName +'</li>' +
       '<li role="presentation"><a role="menuitem" tabindex="-1" href="/repos">Repository search</a></li>' +
-      '<li role="presentation"><a class="toggle-done" role="menuitem" tabindex="-1" href="#">Show done items</a></li>' +
+      '<li role="presentation"><a class="toggle-done" role="menuitem" tabindex="-1" href="#">Toggle done items</a></li>' +
       '<li role="presentation"><a role="menuitem" tabindex="-1" href="/logout">Logout</a></li>' +
     '</ul>'
   );
