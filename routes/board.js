@@ -73,7 +73,7 @@ function _checkLabelMatches(issue, label) {
   }
 }
 
-router.get('/:user/:repo', function(req, res, next) {
+router.get('/:user/:repo', util.isAuthenticated, function(req, res, next) {
   var repoName = req.params.repo;
   var request = new Request(
     '/repos/'+ config.githubUser + '/'+ repoName + '/issues?state=open&per_page=100',

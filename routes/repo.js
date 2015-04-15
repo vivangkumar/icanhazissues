@@ -1,14 +1,15 @@
 var express = require('express');
 var router = express.Router();
 var Request = require('../lib/request');
+var util = require('../lib/util');
 
 var config = CONFIG;
 
-router.get('/', function(req, res, next) {
+router.get('/', util.isAuthenticated, function(req, res, next) {
   res.render('repo');
 });
 
-router.get('/search', function(req, res, next) {
+router.get('/search', util.isAuthenticated, function(req, res, next) {
   var query = req.query.repo;
   if (query == '') {
     res.render('repo', {error: 'Please enter a search term'});

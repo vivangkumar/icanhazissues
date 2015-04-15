@@ -3,6 +3,7 @@ var router = express.Router();
 var OAuth = require('oauth').OAuth2;
 var qs = require('querystring');
 var Request = require('../lib/request');
+var util = require('../lib/util');
 
 var config = CONFIG;
 var githubAccessToken;
@@ -15,25 +16,6 @@ var auth = new OAuth(
   'login/oauth/access_token',
   null
 );
-
-/* Get the authorize URL from Github */
-var authUrl = auth.getAuthorizeUrl({
-  redirect_uri: process.env.GITHUB_OAUTH_REDIRECT_URI + '/login',
-  scope: ['repo'],
-  state: config.githubState
-});
-
-/**
- * Check if an access token has already been issued.
- * @param req
- * @returns boolean
- */
-function isAuthenticated(req) {
-  if (req.signedCookies.accessToken) {
-    return true;
-  }
-  return false;
-}
 
 /**
  * Get currently logged in user details.
@@ -67,12 +49,8 @@ function _setCookie(res, key, value, signed) {
 }
 
 /* Home page */
-router.get('/', function(req, res, next) {
-  if (!isAuthenticated(req)) {
-    res.render('index', {authUrl: authUrl});
-  } else {
-    res.redirect('/repos');
-  }
+router.get('/', util.isAuthenticated, function(req, res, next) {
+  res.redirect('/repos');
 });
 
 /**
