@@ -40,7 +40,7 @@ for(var i = 0; i < issueGroups.length; i++) {
     onStart: function(event) {
       var parentNode = event.item.parentNode;
       fromLabel = parentNode.getAttribute('data-label');
-      fromMilestone = parentNode.getAttribute('data-milestone');
+      fromMilestone = parentNode.getAttribute('data-milestone').replace(/ /g, '-');
     },
     onEnd: function(event) {
       var issueNumber = event.item.getAttribute('data-issue-number');
@@ -49,7 +49,7 @@ for(var i = 0; i < issueGroups.length; i++) {
       var blocked = false;
 
       toLabel = parentNode.getAttribute('data-label');
-      toMilestone = parentNode.getAttribute('data-milestone');
+      toMilestone = parentNode.getAttribute('data-milestone').replace(/ /g, '-');
 
       if (event.item.getAttribute('data-blocked') == 'true') {
         blocked = true;
@@ -65,11 +65,18 @@ for(var i = 0; i < issueGroups.length; i++) {
       };
 
       if(fromLabel != toLabel && fromMilestone == toMilestone) {
+        var toCount = parseInt(parentNode.getAttribute('data-count'));
+        parentNode.setAttribute('data-count', toCount + 1);
+
+        var fromCount = parseInt(document.getElementsByClassName(fromMilestone + "-" + fromLabel + "-list-group")[0].getAttribute('data-count'));
+        document.getElementsByClassName(fromMilestone + "-" + fromLabel + "-list-group")[0].setAttribute('data-count', fromCount - 1);
+
         if (toLabel == 'done') {
           if (localStorage.doneColumn == 'false') {
             event.item.style.display = 'none';
           }
 
+          $('.' + toMilestone + '-done-badge').html(toCount + 1);
           event.item.classList.add('issue-list-item-done');
           event.item.classList.remove('issue-list-item-' + fromLabel);
         }
@@ -77,17 +84,15 @@ for(var i = 0; i < issueGroups.length; i++) {
         if (fromLabel == 'done') {
           event.item.classList.remove('issue-list-item-done');
           event.item.classList.add('issue-list-item-' + toLabel);
+          $('.' + fromMilestone + '-done-badge').html(fromCount - 1);
         }
-        var toCount = parseInt(parentNode.getAttribute('data-count'));
-        parentNode.setAttribute('data-count', toCount + 1);
-        var fromCount = parseInt(document.getElementsByClassName(fromMilestone + "-" + fromLabel + "-" + "list-group")[0].getAttribute('data-count'));
-        document.getElementsByClassName(fromMilestone + "-" + fromLabel + "-" + "list-group")[0].setAttribute('data-count', fromCount - 1);
+
         event.item.setAttribute('id', toLabel + '-' + issueNumber);
 
         cardMoved['cardHtml'] = event.item.outerHTML;
         // Trigger pusher event and update issue on github
         channel.trigger('client-issue-updates', cardMoved);
-        updateIssue(issueNumber, fromLabel, toLabel, blocked, issueTitle);
+        //updateIssue(issueNumber, fromLabel, toLabel, blocked, issueTitle);
       }
     }
   });

@@ -14,7 +14,7 @@ block card
 block done-bucket
   li(class='list-group-item done-bucket')
     div(class='bucket')
-      span(class='badge #{key}-done-badge') #{v.length}
+      span(class='badge #{dash(key)}-done-badge') #{v.length}
 
 block content
   - // Replace all spaces with a `-` when naming classes
@@ -48,7 +48,7 @@ block content
         div(class='milestone-heading')
           p(class='milestone-heading-text') #{key}
         each v, k in val
-          div(class='col-md-3 board-columns' id='#{key}-#{k}-column')
+          div(class='col-md-3 board-columns' id='#{dash(key)}-#{k}-column')
             div(class='panel board-panel panel-default')
               div(class='panel-heading board-panel-heading')
               div(class='panel-body board-panel-body')
