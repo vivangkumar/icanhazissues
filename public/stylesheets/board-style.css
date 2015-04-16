@@ -215,6 +215,8 @@ a:hover {
 
 .done-bucket {
   display: none;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .bucket {
@@ -223,7 +225,6 @@ a:hover {
   overflow: hidden;
   background-color: white;
   font-size: 14px;
-  padding-top: 9px;
 }
 
 .badge {
