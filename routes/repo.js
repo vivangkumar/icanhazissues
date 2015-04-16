@@ -17,7 +17,7 @@ router.get('/search', util.isAuthenticated, function(req, res, next) {
     var request = new Request(
       '/search/repositories?q='+ query +'+in:name+user:' + config.githubUser,
       'GET',
-      {Authorization: 'token ' + req.signedCookies.accessToken},
+      req.signedCookies.accessToken,
       null
     );
 

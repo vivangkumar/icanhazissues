@@ -25,7 +25,7 @@ function _getUserDetails(token) {
   return new Request(
     '/user',
     'GET',
-    {Authorization: 'token ' + token},
+    token,
     null
   );
 }

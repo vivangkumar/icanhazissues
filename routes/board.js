@@ -78,7 +78,7 @@ router.get('/:user/:repo', util.isAuthenticated, function(req, res, next) {
   var request = new Request(
     '/repos/'+ config.githubUser + '/'+ repoName + '/issues?state=open&per_page=100',
     'GET',
-    {Authorization: 'token ' + req.signedCookies.accessToken},
+    req.signedCookies.accessToken,
     null
   );
 

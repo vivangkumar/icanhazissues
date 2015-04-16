@@ -22,7 +22,7 @@ router.post('/:repo/update/:issue', function(req, res, next) {
   var request = new Request(
     '/repos/' + config.githubUser + '/' + repoName + '/issues/' + issueNumber,
     'PATCH',
-    {Authorization: 'token ' + req.signedCookies.accessToken},
+    req.signedCookies.accessToken,
     body
   );
 
@@ -71,7 +71,7 @@ function _postIssueComment(data) {
   var request = new Request(
     '/repos/' + data.owner + '/' + data.repo + '/issues/' + data.issueNumber + '/comments',
     'POST',
-    {Authorization: 'token ' + data.accessToken},
+    data.accessToken,
     {body: 'changed status from ' + data.oldLabel + ' to ' + data.newLabel}
   );
 
