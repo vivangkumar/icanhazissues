@@ -7,7 +7,9 @@ var pusher = new Pusher(pusherKey, {
   authEndpoint: '/pusher/auth'
 });
 
-var channel = pusher.subscribe('private-issues');
+var repositoryName = window.location.pathname.split('/')[3];
+
+var channel = pusher.subscribe('private-issues-' + repositoryName);
 channel.bind('client-issue-updates', function(data) {
   // Remove old card before appending new one
   var cardToRemove = '#'+ data.fromLabel + '-' + data.issueNumber;
@@ -47,7 +49,6 @@ channel.bind('client-issue-updates', function(data) {
 });
 
 var issueGroups = document.getElementsByClassName('issue-list-group');
-var repositoryName = window.location.pathname.split('/')[3];
 var fromLabel = "";
 var toLabel = "";
 var fromMilestone = "";
