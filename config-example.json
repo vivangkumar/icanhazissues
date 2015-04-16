@@ -9,5 +9,6 @@
   "pusherKey": "",
   "pusherSecret": "",
   "eventinatorKey": "",
-  "eventinatorKey": ""
+  "eventinatorKey": "",
+  "githubRedirectUri": "http://localhost:3000/login"
 }

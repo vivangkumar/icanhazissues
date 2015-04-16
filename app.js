@@ -19,7 +19,8 @@ try {
     "pusherAppId": process.env.PUSHER_APP_ID,
     "pusherKey": process.env.PUSHER_KEY,
     "pusherSecret": process.env.PUSHER_SECRET,
-    "eventinatorKey": process.env.EVENTINATOR_KEY
+    "eventinatorKey": process.env.EVENTINATOR_KEY,
+    "githubRedirectUri": process.env.GITHUB_OAUTH_REDIRECT_URI
   }
 }
 

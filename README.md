@@ -32,7 +32,8 @@ This is a rewrite of the [original version](https://github.com/pusher/icanhaziss
       "pusherAppId": "pusher app id",
       "pusherKey": "pusher key",
       "pusherSecret": "pusher secret",
-      "eventinatorKey": "eventinator key"
+      "eventinatorKey": "eventinator key",
+      "githubRedirectUri": "your redirect uri for oAuth"
     }
 
     ```
@@ -48,7 +49,7 @@ This is a rewrite of the [original version](https://github.com/pusher/icanhaziss
     EVENTINATOR_KEY
     GITHUB_OAUTH_REDIRECT_URI
     ```
-- Run `GITHUB_OAUTH_REDIRECT_URI='HOSTNAME:PORT' node ./bin/www` to run the express app.
+- Run `node ./bin/www` to run the express app.
 
 ### Gulp tasks
 
