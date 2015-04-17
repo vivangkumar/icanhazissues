@@ -6,7 +6,6 @@ var Request = require('../lib/request');
 var util = require('../lib/util');
 
 var config = CONFIG;
-var githubAccessToken;
 
 var auth = new OAuth(
   config.githubClientId,
@@ -24,6 +23,20 @@ var auth = new OAuth(
 function _getUserDetails(token) {
   return new Request(
     '/user',
+    'GET',
+    token,
+    null
+  );
+}
+
+/**
+ * Get user organization details.
+ * @param user
+ * @user token
+ */
+function _getUserOrganizations(user, token) {
+  return new Request(
+    '/users/' + user + '/orgs',
     'GET',
     token,
     null
@@ -71,31 +84,54 @@ router.get('/login', function(req, res, next) {
         console.log(results.error);
         res.status(401).send(JSON.stringify(results));
       } else {
-        githubAccessToken = accessToken;
+        res.locals.githubAccessToken = accessToken;
+        _setCookie(res, 'accessToken', accessToken, true);
         // Go on to next handler
         next();
       }
     }
   )
-}, function(req, res) {
-  var userDetails = _getUserDetails(githubAccessToken);
+}, function(req, res, next) {
+  var userDetails = _getUserDetails(res.locals.githubAccessToken);
   userDetails.do(function(error, response, body) {
     if (error) {
       console.log(error);
-      res.status(500).send(JSON.stringify({ error: error }));
+      res.status(500).send(error);
     }
 
     if (response.statusCode != 200) {
       console.log('Unexpected response from Github ' + response.statusCode);
-      res.status(response.StatusCode).send(JSON.stringify({ error: body }));
+      res.status(response.StatusCode).send(body);
     } else {
-      var githubUser = JSON.parse(body).login;
-      _setCookie(res, 'accessToken', githubAccessToken, true);
-      _setCookie(res, 'githubUser', githubUser, false);
+      res.locals.githubUser = JSON.parse(body).login;
+      _setCookie(res, 'githubUser', JSON.parse(body).login, false);
 
-      res.redirect('/');
+      next();
     }
   })
+}, function(req, res) {
+  var orgs = _getUserOrganizations(res.locals.githubUser, res.locals.githubAccessToken);
+  orgs.do(function(error, response, body) {
+    if (error) {
+      res.status(500).send(error);
+      console.log('Error getting user orgs ' + error);
+    }
+
+    if (response.statusCode == 200) {
+      var parsedResponse = JSON.parse(body);
+      var orgs = [];
+
+      for(var i = 0; i < parsedResponse.length; i++) {
+        orgs.push(parsedResponse[i].login);
+      }
+      _setCookie(res, 'githubOrganizations', orgs, false);
+
+      res.redirect('/');
+    } else {
+      console.log('Unexpected response from Github ' + response.statusCode);
+      res.status(response.StatusCode).send(body);
+    }
+  });
 });
 
 /* Logout and destroy the session */
@@ -103,6 +139,7 @@ router.get('/logout', function(req, res, next) {
   req.session = null;
   res.clearCookie('accessToken');
   res.clearCookie('githubUser');
+  res.clearCookie('githubOrganizations');
   res.render('logout');
 });
 
