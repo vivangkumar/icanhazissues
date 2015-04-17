@@ -12,12 +12,19 @@ router.get('/', util.isAuthenticated, function(req, res, next) {
 router.get('/search', util.isAuthenticated, function(req, res, next) {
   var query = req.query.repo;
   var userOrganizations = req.cookies.githubOrganizations;
+  var githubUser = req.cookies.githubUser;
+  var userQuery = '';
+  userOrganizations.push(githubUser);
+
+  for (var org in userOrganizations) {
+    userQuery += 'user:' + userOrganizations[org] + '+';
+  }
 
   if (query == '') {
     res.render('repo', { error: 'Please enter a search term' });
   } else {
     var request = new Request(
-      '/search/repositories?q='+ query +'+in:name+user:' + config.githubUser,
+      '/search/repositories?q='+ query +'+in:name+' + userQuery.slice(0, -1),
       'GET',
       req.signedCookies.accessToken,
       null

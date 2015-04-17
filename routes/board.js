@@ -73,10 +73,12 @@ function _checkLabelMatches(issue, label) {
   }
 }
 
-router.get('/:user/:repo', util.isAuthenticated, function(req, res, next) {
+router.get('/:owner/:repo', util.isAuthenticated, function(req, res, next) {
   var repoName = req.params.repo;
+  var owner = req.params.owner;
+
   var request = new Request(
-    '/repos/'+ config.githubUser + '/'+ repoName + '/issues?state=open&per_page=100',
+    '/repos/'+ owner + '/'+ repoName + '/issues?state=open&per_page=100',
     'GET',
     req.signedCookies.accessToken,
     null
