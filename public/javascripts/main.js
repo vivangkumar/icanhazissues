@@ -138,7 +138,7 @@ for(var i = 0; i < issueGroups.length; i++) {
  * @returns boolean
  */
 function updateIssue(issueNumber, oldLabel, newLabel, blocked, issueTitle) {
-  var ISSUE_ENDPOINT = '/issues/' + repositoryName + '/update/' +issueNumber;
+  var ISSUE_ENDPOINT = '/issues/' + ownerName + '/' + repositoryName + '/update/' +issueNumber;
   var data = {
     issueTitle: issueTitle,
     oldLabel: oldLabel,

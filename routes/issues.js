@@ -5,10 +5,11 @@ var Eventinator = require('../lib/eventinator');
 
 var config = CONFIG;
 
-router.post('/:repo/update/:issue', function(req, res, next) {
+router.post('/:owner/:repo/update/:issue', function(req, res, next) {
   var issueNumber = req.params.issue;
   var issueTitle = req.body.issueTitle;
   var repoName = req.params.repo;
+  var owner = req.params.owner;
   var labelsToUpdate = [req.body.newLabel];
 
   if (req.body.blocked == 'true') {
@@ -20,7 +21,7 @@ router.post('/:repo/update/:issue', function(req, res, next) {
   };
 
   var request = new Request(
-    '/repos/' + config.githubUser + '/' + repoName + '/issues/' + issueNumber,
+    '/repos/' + owner + '/' + repoName + '/issues/' + issueNumber,
     'PATCH',
     req.signedCookies.accessToken,
     body
@@ -34,7 +35,7 @@ router.post('/:repo/update/:issue', function(req, res, next) {
     if (response.statusCode == 200) {
       res.status(200).send(JSON.stringify({ message: 'Issue updated' }));
       var commentData = {
-        owner: config.githubUser,
+        owner: owner,
         repo: repoName,
         issueNumber: issueNumber,
         accessToken: req.signedCookies.accessToken,
@@ -72,7 +73,7 @@ function _postIssueComment(data) {
     '/repos/' + data.owner + '/' + data.repo + '/issues/' + data.issueNumber + '/comments',
     'POST',
     data.accessToken,
-    {body: 'changed status from ' + data.oldLabel + ' to ' + data.newLabel}
+    { body: 'changed status from ' + data.oldLabel + ' to ' + data.newLabel }
   );
 
   request.do(function(error, response, body) {
