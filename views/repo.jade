@@ -15,7 +15,7 @@ block content
             input(type='text' name='repo' class='form-control' id='repo-search-box' placeholder='Search for repositories')
             button(type='submit' class='btn btn-primary' id='repo-search-button') Search
 
-    if repoNames
+    if repoNames.length > 0
       div(class='row row-centered')
         div(class='col-md-4 col-centered' id='repo-results')
             each repo in repoNames
@@ -23,6 +23,10 @@ block content
                 div(class='panel panel-default repo-result-panel')
                   div(class='panel-body')
                     |#{repo}
+    else
+      div(class='row row-centered')
+        div(class='col-md-4 col-centered')
+          p| No repositories were found
 
     if error
       div(class='row row-centered')

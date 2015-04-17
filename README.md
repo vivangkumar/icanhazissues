@@ -28,7 +28,6 @@ This is a rewrite of the [original version](https://github.com/pusher/icanhaziss
       "githubState": "random string to prevent XSS",
       "cookieSecret": "random string to sign the cookies with",
       "boardColumns": ["ready", "development", "review", "release", "done"],
-      "githubUser": "github user name/ org name",
       "pusherAppId": "pusher app id",
       "pusherKey": "pusher key",
       "pusherSecret": "pusher secret",
@@ -42,7 +41,6 @@ This is a rewrite of the [original version](https://github.com/pusher/icanhaziss
     GITHUB_CLIENT_ID
     GITHUB_CLIENT_ID
     GITHUB_STATE
-    GITHUB_USER
     PUSHER_APP_ID
     PUSHER_KEY
     PUSHER_SECRET
@@ -63,7 +61,5 @@ Let it run in the background, if you choose to.
 - Issues are backed by pusher and synced in real time.
 
 ### To-do
-- Enable webhook and pusher backing. Issues updated on Github must be updated on the board.
-- Issues page contains some issues that need doing.
-- Some of the code still needs to be refactored.
-- Write some tests as well
+- Write tests
+- Make eventinator optional

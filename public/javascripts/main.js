@@ -10,7 +10,7 @@ var pusher = new Pusher(pusherKey, {
 var repositoryName = window.location.pathname.split('/')[3];
 var ownerName = window.location.pathname.split('/')[2];
 
-var channel = pusher.subscribe('private-issues-' + repositoryName);
+var channel = pusher.subscribe('private-issues-' + repositoryName + '-' + ownerName);
 channel.bind('client-issue-updates', function(data) {
   // Remove old card before appending new one
   var cardToRemove = '#'+ data.fromLabel + '-' + data.issueNumber;
