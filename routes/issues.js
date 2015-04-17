@@ -28,11 +28,11 @@ router.post('/:repo/update/:issue', function(req, res, next) {
 
   request.do(function(error, response, body) {
     if (error) {
-      res.status(500).send(JSON.stringify({error: 'There was an error updating the issue'}));
+      res.status(500).send(JSON.stringify({ error: 'There was an error updating the issue' }));
     }
 
     if (response.statusCode == 200) {
-      res.status(200).send(JSON.stringify({message: 'Issue updated'}));
+      res.status(200).send(JSON.stringify({ message: 'Issue updated' }));
       var commentData = {
         owner: config.githubUser,
         repo: repoName,
@@ -58,7 +58,7 @@ router.post('/:repo/update/:issue', function(req, res, next) {
         _sendToEventinator(eventData);
       }
     } else {
-      res.status(response.statusCode).send(JSON.stringify({error: 'There was an error updating the issue'}));
+      res.status(response.statusCode).send(JSON.stringify({ error: 'There was an error updating the issue' }));
     }
   });
 });

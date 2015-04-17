@@ -66,7 +66,7 @@ router.get('/login', function(req, res, next) {
     function(error, accessToken, refreshToken, results) {
       if (error) {
         console.log(error);
-        res.status(500).send(JSON.stringify({error: error}));
+        res.status(500).send(JSON.stringify({ error: error }));
       } else if (results.error) {
         console.log(results.error);
         res.status(401).send(JSON.stringify(results));
@@ -82,12 +82,12 @@ router.get('/login', function(req, res, next) {
   userDetails.do(function(error, response, body) {
     if (error) {
       console.log(error);
-      res.status(500).send(JSON.stringify({error: error}));
+      res.status(500).send(JSON.stringify({ error: error }));
     }
 
     if (response.statusCode != 200) {
       console.log('Unexpected response from Github ' + response.statusCode);
-      res.status(response.StatusCode).send(JSON.stringify({error: body}));
+      res.status(response.StatusCode).send(JSON.stringify({ error: body }));
     } else {
       var githubUser = JSON.parse(body).login;
       _setCookie(res, 'accessToken', githubAccessToken, true);

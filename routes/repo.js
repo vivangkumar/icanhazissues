@@ -33,10 +33,10 @@ router.get('/search', util.isAuthenticated, function(req, res, next) {
         for (var i = 0; i < parsedRepos.length; i++) {
           repoNames.push(parsedRepos[i].full_name);
         }
-        res.render('repo', {repoNames: repoNames});
+        res.render('repo', { repoNames: repoNames });
       } else {
         console.log('Error ' + body + ' Status code ' + response.statusCode);
-        res.render('repo', {error: 'There was an error querying the Github API.'});
+        res.render('repo', { error: 'There was an error querying the Github API.' });
       }
     });
   }

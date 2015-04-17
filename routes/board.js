@@ -106,7 +106,7 @@ router.get('/:user/:repo', util.isAuthenticated, function(req, res, next) {
             assignee: parsedRepos[i].assignee,
             createdAt: parsedRepos[i].created_at,
             label: parsedRepos[i].labels,
-            milestone: parsedRepos[i].milestone || {title: 'uncategorized'}
+            milestone: parsedRepos[i].milestone || { title: 'uncategorized' }
           }
 
           if (parsedRepos[i].milestone) {
