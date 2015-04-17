@@ -25,13 +25,11 @@ channel.bind('client-issue-updates', function(data) {
   var milestoneClass = '.' + toMilestone + '-' + toLabel + '-list-group';
 
   if (toLabel == 'done') {
-    console.log('.' + fromMilestone + '-' + fromLabel + '-list-group');
     $('.' + toMilestone + '-done-badge').html(toCount);
     $('.' + toMilestone + '-' + toLabel + '-list-group').attr('data-count', toCount);
   }
 
   if (fromLabel == 'done') {
-    console.log('.' + fromMilestone + '-' + fromLabel + '-list-group');
     $('.' + fromMilestone + '-' + fromLabel + '-list-group').attr('data-count', fromCount);
     $('.' + fromMilestone + '-done-badge').html(fromCount);
   }
