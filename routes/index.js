@@ -121,10 +121,13 @@ router.get('/login', function(req, res, next) {
       var parsedResponse = JSON.parse(body);
       var orgs = [];
 
-      for(var i = 0; i < parsedResponse.length; i++) {
-        orgs.push(parsedResponse[i].login);
+      if (parsedResponse.length > 0) {
+        for(var i = 0; i < parsedResponse.length; i++) {
+          orgs.push(parsedResponse[i].login);
+        }
+
+        _setCookie(res, 'githubOrganizations', orgs, false);
       }
-      _setCookie(res, 'githubOrganizations', orgs, false);
 
       res.redirect('/');
     } else {

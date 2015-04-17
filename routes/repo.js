@@ -11,7 +11,7 @@ router.get('/', util.isAuthenticated, function(req, res, next) {
 
 router.get('/search', util.isAuthenticated, function(req, res, next) {
   var query = req.query.repo;
-  var userOrganizations = req.cookies.githubOrganizations;
+  var userOrganizations = req.cookies.githubOrganizations || [];
   var githubUser = req.cookies.githubUser;
   var userQuery = '';
   userOrganizations.push(githubUser);
