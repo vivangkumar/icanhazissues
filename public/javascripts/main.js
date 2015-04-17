@@ -8,6 +8,7 @@ var pusher = new Pusher(pusherKey, {
 });
 
 var repositoryName = window.location.pathname.split('/')[3];
+var ownerName = window.location.pathname.split('/')[2];
 
 var channel = pusher.subscribe('private-issues-' + repositoryName);
 channel.bind('client-issue-updates', function(data) {
@@ -223,6 +224,7 @@ function addMenu() {
  * of the heading columns
  */
 function addNewIssueButton() {
+  var newIssueUrl = 'https://github.com/' + ownerName + '/' + repositoryName + '/issues/new';
   $('.heading-column:last-child').append(
     '<a class="add-issue-button pull-right" target="_blank" href="'+ newIssueUrl +'">' +
       '<i class="fa fa-plus fa-sm"></i>' +

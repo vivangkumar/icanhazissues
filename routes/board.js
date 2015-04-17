@@ -127,7 +127,6 @@ router.get('/:user/:repo', util.isAuthenticated, function(req, res, next) {
         milestones: milestones,
         columns: config.boardColumns,
         pusherKey: config.pusherKey,
-        newIssueUrl: 'https://github.com/' + config.githubUser + '/' + repoName + '/issues/new',
         retrospectiveReminders: categorizedIssues.retrospectiveReminders
       });
     } else {
