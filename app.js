@@ -15,7 +15,6 @@ try {
     "githubState": process.env.GITHUB_STATE,
     "cookieSecret": process.env.COOKIE_SECRET,
     "boardColumns": ["ready", "development", "review", "release", "done"],
-    "githubUser": process.env.GITHUB_USER,
     "pusherAppId": process.env.PUSHER_APP_ID,
     "pusherKey": process.env.PUSHER_KEY,
     "pusherSecret": process.env.PUSHER_SECRET,
