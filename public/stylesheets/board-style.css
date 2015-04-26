@@ -62,8 +62,8 @@ a {
 }
 
 .issue-list-item {
-  margin: 1px;
   border-radius: 5px;
+  margin-right: -1px;
   font-size: 12px;
   text-align: left;
   overflow: hidden;
@@ -74,7 +74,7 @@ a {
   padding-left: 3px;
   padding-top: 0px;
   padding-bottom: 0px;
-  padding-right: 0px;
+  padding-right: 1px;
 }
 
 .board-panel-body {
