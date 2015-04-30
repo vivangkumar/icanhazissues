@@ -106,7 +106,7 @@ router.get('/:owner/:repo', util.isAuthenticated, function(req, res, next) {
             title: parsedRepos[i].title,
             url: parsedRepos[i].html_url,
             assignee: parsedRepos[i].assignee,
-            createdAt: parsedRepos[i].created_at,
+            updatedAt: parsedRepos[i].updated_at,
             label: parsedRepos[i].labels,
             milestone: parsedRepos[i].milestone || { title: 'uncategorized' }
           }

@@ -187,7 +187,7 @@ function getColourCode(date) {
  */
 function assignColourCode() {
   $('.issue-list-item').each(function() {
-    var colourCode = getColourCode($(this).attr('data-created'));
+    var colourCode = getColourCode($(this).attr('data-updated'));
     $(this).css('border-left-width', '5px').css('border-left-color', colourCode);
   });
 }

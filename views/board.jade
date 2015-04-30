@@ -57,10 +57,10 @@ block content
                     block done-bucket
                   each i in v
                     if blocked(i)
-                      li(class='list-group-item issue-list-item issue-list-item-#{k}' data-created='#{i.createdAt}' data-blocked='true' data-issue-number='#{i.issueNumber}' id='#{k}-#{i.issueNumber}')
+                      li(class='list-group-item issue-list-item issue-list-item-#{k}' data-updated='#{i.updatedAt}' data-blocked='true' data-issue-number='#{i.issueNumber}' id='#{k}-#{i.issueNumber}')
                         block card
                     else
-                      li(class='list-group-item issue-list-item issue-list-item-#{k}' data-created='#{i.createdAt}' data-issue-number='#{i.issueNumber}' id='#{k}-#{i.issueNumber}')
+                      li(class='list-group-item issue-list-item issue-list-item-#{k}' data-updated='#{i.updatedAt}' data-issue-number='#{i.issueNumber}' id='#{k}-#{i.issueNumber}')
                         block card
 
   script.
