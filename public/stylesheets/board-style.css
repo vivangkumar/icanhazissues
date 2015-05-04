@@ -101,6 +101,7 @@ a {
   text-align: left;
   font-weight: bold;
   padding: 0px;
+  border-bottom: 0px;
 }
 
 .panel-default > .panel-heading {
