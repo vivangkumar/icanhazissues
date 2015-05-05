@@ -79,7 +79,7 @@ a {
 
 .board-panel-body {
   padding: 0px;
-  background-color: #E2E4E6;
+  background-color: #278095;
 }
 
 .issue-text {
@@ -96,8 +96,8 @@ a {
 }
 
 .board-panel-heading {
-  border-color: #E2E4E6;
-  background-color: #E2E4E6;
+  border-color: #2989A0;
+  background-color: #2989A0;
   text-align: left;
   font-weight: bold;
   padding: 0px;
@@ -105,8 +105,8 @@ a {
 }
 
 .panel-default > .panel-heading {
-  border-color: #E2E4E6;
-  background-color: #E2E4E6;
+  border-color: #2989A0;
+  background-color: #2989A0;
 }
 
 .avatar {
@@ -178,7 +178,9 @@ a:hover {
 .board-panel {
   margin-bottom: 0px;
 }
-
+.panel {
+  border-color: #2989A0;
+}
 .dropdown-menu {
   background-color: #34495E;
 }
