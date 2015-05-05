@@ -13,12 +13,11 @@ This is a rewrite of the [original version](https://github.com/pusher/icanhaziss
 
 - Clone the repository
 - Install all node dependencies using `npm install`
-- You'll need to create a new Github application.
-  Call it what ever you want, make sure the callback uri points to your local hostname and port
+- You'll need to create a new [Github application] (https://github.com/settings/applications/new)
+  Call it what ever you want, make sure the callback uri points to your local hostname and port (eg localhost:3000/login)
   Copy the secret and client ID
-- Create an account with Pusher if you dont have one and copy the credentials
-- Also make sure that **client events are enabled**
-- Create a `config.json` in the root directory
+- Create a new app with Pusher and make sure that **client events are enabled**
+- Create a `config.json` in the root directory (or copy `config-example.json`)
     This must contain the following fields:
 
     ```json
