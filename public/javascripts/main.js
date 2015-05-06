@@ -22,6 +22,7 @@ channel.bind('client-issue-updates', function(data) {
   var toCount = data.toCount;
   var issueLink = data.issueLink;
   var issueTitle = data.issueTitle;
+  var user = data.githubUser;
 
   $(cardToRemove).remove();
 
@@ -49,7 +50,7 @@ channel.bind('client-issue-updates', function(data) {
   }
 
   if (toLabel == 'review') {
-    triggerNotification(issueTitle, issueLink, toMilestone)
+    triggerNotification(issueTitle, issueLink, toMilestone, user)
   }
 });
 
@@ -98,7 +99,8 @@ for(var i = 0; i < issueGroups.length; i++) {
         toMilestone: toMilestone,
         fromLabel: fromLabel,
         toLabel: toLabel,
-        issueLink: issueLink
+        issueLink: issueLink,
+        githubUser: $.cookie("githubUser")
       };
 
       if(fromLabel != toLabel && fromMilestone == toMilestone) {
@@ -274,10 +276,10 @@ function setupNotification() {
   if (Notification.permission !== "granted") Notification.requestPermission();
 }
 
-function triggerNotification(issueTitle, issueLink, issueMilestone) {
+function triggerNotification(issueTitle, issueLink, issueMilestone, user) {
   var notification = new Notification(issueTitle + " is ready to be reviewed!", {
     tag: 'icanhazissues-review-notification',
-    body: $.cookie("githubUser") + " moved a card to the review column for the " + issueMilestone
+    body: user + " moved a card to the review column for the " + issueMilestone
           + " milestone."
   });
 
