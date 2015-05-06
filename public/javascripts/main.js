@@ -20,6 +20,8 @@ channel.bind('client-issue-updates', function(data) {
   var fromMilestone = data.fromMilestone;
   var fromCount = data.fromCount;
   var toCount = data.toCount;
+  var issueLink = data.issueLink;
+  var issueTitle = data.issueTitle;
 
   $(cardToRemove).remove();
 
@@ -44,6 +46,10 @@ channel.bind('client-issue-updates', function(data) {
     } else {
       relevantCard.css('display', 'block');
     }
+  }
+
+  if (toLabel == 'review') {
+    triggerNotification(issueTitle, issueLink, toMilestone)
   }
 });
 
@@ -73,6 +79,7 @@ for(var i = 0; i < issueGroups.length; i++) {
     onEnd: function(event) {
       var issueNumber = event.item.getAttribute('data-issue-number');
       var issueTitle = event.item.getElementsByTagName('a')[0].innerHTML;
+      var issueLink = event.item.getElementsByTagName('a')[0].href;
       var parentNode = event.item.parentNode;
       var blocked = false;
 
@@ -91,6 +98,7 @@ for(var i = 0; i < issueGroups.length; i++) {
         toMilestone: toMilestone,
         fromLabel: fromLabel,
         toLabel: toLabel,
+        issueLink: issueLink
       };
 
       if(fromLabel != toLabel && fromMilestone == toMilestone) {
@@ -258,6 +266,30 @@ function retainPreviousSetting() {
   }
 }
 
+function setupNotification() {
+  if (!Notification) {
+    console.log("This browser does not support notifications")
+  }
+
+  if (Notification.permission !== "granted") Notification.requestPermission();
+}
+
+function triggerNotification(issueTitle, issueLink, issueMilestone) {
+  var notification = new Notification(issueTitle + " is ready to be reviewed!", {
+    tag: 'icanhazissues-review-notification',
+    body: $.cookie("githubUser") + " moved a card to the review column for the " + issueMilestone
+          + " milestone."
+  });
+
+  notification.onclick = function() {
+    window.open(issueLink);
+  }
+
+  notification.onshow = function() {
+    setTimeout(notification.close.bind(notification), 10000);
+  }
+}
+
 $(window).load(function() {
   addMenu();
   addNewIssueButton();
@@ -265,4 +297,5 @@ $(window).load(function() {
   addBlockedLabel();
   toggleDoneColumn();
   retainPreviousSetting();
+  setupNotification();
 });
