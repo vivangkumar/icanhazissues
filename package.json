@@ -9,24 +9,24 @@
     "node": "0.12.x"
   },
   "dependencies": {
-    "body-parser": "~1.10.2",
+    "body-parser": "^1.10.2",
     "cookie-parser": "~1.3.3",
     "cookie-session": "^1.1.0",
-    "debug": "~2.1.1",
+    "debug": "^2.1.3",
     "del": "^1.1.1",
     "express": "~4.11.1",
     "gulp": "^3.8.11",
     "gulp-concat": "^2.5.2",
-    "gulp-minify-css": "^1.0.0",
-    "gulp-rename": "^1.2.0",
-    "gulp-uglify": "^1.1.0",
+    "gulp-minify-css": "^1.1.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.2.0",
     "jade": "~1.9.1",
-    "morgan": "~1.5.1",
+    "morgan": "^1.5.3",
     "node-data-structures": "^1.0.1",
     "oauth": "^0.9.12",
-    "pusher": "^1.0.4",
+    "pusher": "^1.0.5",
     "querystring": "^0.2.0",
-    "request": "^2.53.0",
-    "serve-favicon": "~2.2.0"
+    "request": "^2.55.0",
+    "serve-favicon": "^2.2.1"
   }
 }
