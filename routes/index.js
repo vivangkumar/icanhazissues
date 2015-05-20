@@ -55,7 +55,7 @@ function _setCookie(res, key, value, signed) {
     key,
     value,
     {
-      maxAge: 2592000000,
+      maxAge: 25920000000,
       signed: signed
     }
   );
