@@ -53,7 +53,6 @@ router.post('/:owner/:repo/update/:issue', function(req, res, next) {
         user: req.cookies.githubUser
       };
 
-      _postIssueComment(commentData);
       if (process.env.NODE_ENV == 'production') {
         console.log('Sending ' + eventData + ' to Eventinator');
         _sendToEventinator(eventData);
@@ -63,31 +62,6 @@ router.post('/:owner/:repo/update/:issue', function(req, res, next) {
     }
   });
 });
-
-/**
- * Post a comment on the issue indicating states have changed.
- * @param data
- */
-function _postIssueComment(data) {
-  var request = new Request(
-    '/repos/' + data.owner + '/' + data.repo + '/issues/' + data.issueNumber + '/comments',
-    'POST',
-    data.accessToken,
-    { body: 'changed status from ' + data.oldLabel + ' to ' + data.newLabel }
-  );
-
-  request.do(function(error, response, body) {
-    if (error) {
-      console.log(error);
-    }
-
-    if (response.statusCode == 201) {
-      console.log('Issue comment added.');
-    } else {
-      console.log('Error posting comment. Code: ' + response.statusCode + ' Body: '+ JSON.stringify(body));
-    }
-  });
-}
 
 /**
  * Send issue changes to Eventinator.
