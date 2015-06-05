@@ -34,14 +34,6 @@ router.post('/:owner/:repo/update/:issue', function(req, res, next) {
 
     if (response.statusCode == 200) {
       res.status(200).send(JSON.stringify({ message: 'Issue updated' }));
-      var commentData = {
-        owner: owner,
-        repo: repoName,
-        issueNumber: issueNumber,
-        accessToken: req.signedCookies.accessToken,
-        oldLabel: req.body.oldLabel,
-        newLabel: req.body.newLabel
-      };
 
       var eventData = {
         issue: {
