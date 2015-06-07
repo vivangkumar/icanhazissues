@@ -86,6 +86,7 @@ router.post('/:owner/:repo/close', function(req, res, next) {
     } else {
       if (results.length == urls.length) {
         res.status(200).send(JSON.stringify({ message: 'Issues closed' }));
+        _removeDoneCards();
       } else {
         res.status(500).send(JSON.stringify({ error: 'Failed to close some issues' }));
       }
@@ -112,6 +113,12 @@ function _sendToEventinator(details) {
       console.log('Unexpected HTTP code from Eventinator: ' + response.statusCode);
     }
   });
+}
+
+
+function _removeDoneCards() {
+  var pusher = PUSHER;
+  pusher.trigger('server-updates', 'remove-done-cards', {});
 }
 
 module.exports = router;
