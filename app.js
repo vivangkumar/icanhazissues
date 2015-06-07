@@ -5,6 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var session = require('cookie-session');
 var bodyParser = require('body-parser');
+var Pusher = require('pusher');
 
 try {
   CONFIG = require('./config.json');
@@ -22,6 +23,12 @@ try {
     "githubRedirectUri": process.env.GITHUB_OAUTH_REDIRECT_URI
   }
 }
+
+PUSHER = new Pusher({
+  appId: CONFIG.pusherAppId,
+  key: CONFIG.pusherKey,
+  secret: CONFIG.pusherSecret
+});
 
 var app = express();
 

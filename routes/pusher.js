@@ -1,14 +1,8 @@
 var express = require('express');
 var router = express.Router();
-var Pusher = require('pusher');
 
 var config = CONFIG;
-
-var pusher = new Pusher({
-  appId: config.pusherAppId,
-  key: config.pusherKey,
-  secret: config.pusherSecret
-});
+var pusher = PUSHER;
 
 /** Auth endpoint for private channels **/
 router.post('/auth', function(req, res, next) {
