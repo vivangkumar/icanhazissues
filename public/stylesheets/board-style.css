@@ -239,3 +239,8 @@ a:hover {
   font-size: 40px;
   color: #41A9BD;
 }
+
+.notifications {
+  text-align: center;
+  background-color: #D64541;
+}
