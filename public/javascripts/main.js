@@ -53,7 +53,7 @@ channel.bind('client-issue-updates', function(data) {
   }
 });
 
-var serverChannel = pusher.subscribe('server-updates');
+var serverChannel = pusher.subscribe(repositoryName + '-' + ownerName + '-server-updates');
 serverChannel.bind('remove-done-cards', function(data) {
   setTimeout(function() {
     location.reload();
@@ -251,22 +251,24 @@ function closeIssues() {
   }
 
   $("#close-issues").click(function(e) {
-    e.preventDefault();
-    var request = $.ajax({
-      url: closeIssuesEndpoint,
-      type: "POST",
-      data: data,
-      beforeSend: function() {
-        $(".notifications").html("Deleting issues").show();
-      },
-      complete: function(response) {
-        if (response.status == 200) {
-          notify("Issues closed..");
-        } else {
-          notify("Error closing some issues..");
+    var option = confirm("This will close all issues in the done columns. Are you sure?");
+    if (option) {
+      var request = $.ajax({
+        url: closeIssuesEndpoint,
+        type: "POST",
+        data: data,
+        beforeSend: function() {
+          $(".notifications").html("Deleting issues").show();
+        },
+        complete: function(response) {
+          if (response.status == 200) {
+            notify("Issues closed..");
+          } else {
+            notify("Error closing some issues..");
+          }
         }
-      }
-    });
+      });
+    }
   });
 }
 
