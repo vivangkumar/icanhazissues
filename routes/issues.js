@@ -55,6 +55,46 @@ router.post('/:owner/:repo/update/:issue', function(req, res, next) {
   });
 });
 
+router.post('/:owner/:repo/close', function(req, res, next) {
+  var repoName = req.params.repo;
+  var owner = req.params.owner;
+  var issueNumbers = req.body.issueNumbers;
+  var urls = [];
+  var results = [];
+
+  for(var i = 0; i < issueNumbers.length; i++) {
+    urls.push('/repos/' + owner + '/' + repoName + '/issues/' + issueNumbers[i]);
+  }
+
+  var syncCalls = function () {
+    var url = urls.pop();
+    var request = new Request(
+      url,
+      'PATCH',
+      req.signedCookies.accessToken,
+      { state: 'closed' }
+    );
+
+    request.do(function(error, response, body) {
+      if (response.statusCode == 200) {
+        results.push(response);
+      }
+    });
+
+    if(urls.length) {
+      syncCalls(urls);
+    } else {
+      if (results.length == urls.length) {
+        res.status(200).send(JSON.stringify({ message: 'Issues closed' }));
+      } else {
+        res.status(500).send(JSON.stringify({ error: 'Failed to close some issues' }));
+      }
+    }
+  }
+
+  syncCalls();
+});
+
 /**
  * Send issue changes to Eventinator.
  * @param details
