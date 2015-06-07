@@ -86,7 +86,7 @@ router.post('/:owner/:repo/close', function(req, res, next) {
     } else {
       if (results.length == urls.length) {
         res.status(200).send(JSON.stringify({ message: 'Issues closed' }));
-        _removeDoneCards();
+        _removeDoneCards(repoName, owner);
       } else {
         res.status(500).send(JSON.stringify({ error: 'Failed to close some issues' }));
       }
@@ -116,9 +116,9 @@ function _sendToEventinator(details) {
 }
 
 
-function _removeDoneCards() {
+function _removeDoneCards(repoName, ownerName) {
   var pusher = PUSHER;
-  pusher.trigger('server-updates', 'remove-done-cards', {});
+  pusher.trigger(repoName + '-' + ownerName + '-server-updates', 'remove-done-cards', {});
 }
 
 module.exports = router;
