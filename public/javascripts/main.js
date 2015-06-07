@@ -53,6 +53,13 @@ channel.bind('client-issue-updates', function(data) {
   }
 });
 
+var serverChannel = pusher.subscribe('server-updates');
+serverChannel.bind('remove-done-cards', function(data) {
+  setTimeout(function() {
+    location.reload();
+  }, 1000);
+});
+
 var issueGroups = document.getElementsByClassName('issue-list-group');
 var fromLabel = "";
 var toLabel = "";
@@ -131,7 +138,7 @@ for(var i = 0; i < issueGroups.length; i++) {
         cardMoved['toCount'] = toCount + 1;
         // Trigger pusher event and update issue on github
         channel.trigger('client-issue-updates', cardMoved);
-        //updateIssue(issueNumber, fromLabel, toLabel, blocked, issueTitle);
+        updateIssue(issueNumber, fromLabel, toLabel, blocked, issueTitle);
       }
     }
   });
@@ -240,9 +247,7 @@ function closeIssues() {
   };
 
   var notify = function(text) {
-    $(".notifications").html(text).fadeOut(1000, function() {
-      location.reload();
-    });
+    $(".notifications").html(text).fadeOut(1000);
   }
 
   $("#close-issues").click(function(e) {
