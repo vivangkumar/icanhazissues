@@ -131,7 +131,7 @@ for(var i = 0; i < issueGroups.length; i++) {
         cardMoved['toCount'] = toCount + 1;
         // Trigger pusher event and update issue on github
         channel.trigger('client-issue-updates', cardMoved);
-        updateIssue(issueNumber, fromLabel, toLabel, blocked, issueTitle);
+        //updateIssue(issueNumber, fromLabel, toLabel, blocked, issueTitle);
       }
     }
   });
@@ -221,10 +221,48 @@ function addMenu() {
     '<ul class="dropdown-menu" role="menu" aria-labelledby="menu-dropdown">' +
       '<li role="presentation" class="dropdown-header">'+ repositoryName +'</li>' +
       '<li role="presentation"><a role="menuitem" tabindex="-1" href="/repos">Repository search</a></li>' +
+      '<li role="presentation"><a id="close-issues" role="menuitem" tabindex="-1" href="#">Close done issues</a></li>' +
       '<li role="presentation"><a class="toggle-done" role="menuitem" tabindex="-1" href="#">Toggle done items</a></li>' +
       '<li role="presentation"><a role="menuitem" tabindex="-1" href="/logout">Logout</a></li>' +
     '</ul>'
   );
+}
+
+function closeIssues() {
+  var closeIssuesEndpoint = '/issues/' + ownerName + '/' + repositoryName + '/close';
+  var issueNumbers = [];
+  $('.issue-list-item-done').each(function() {
+    issueNumbers.push($(this).attr("data-issue-number"));
+  });
+
+  var data = {
+    issueNumbers: JSON.stringify(issueNumbers)
+  };
+
+  var notify = function(text) {
+    $(".notifications").html(text).fadeOut(1000, function() {
+      location.reload();
+    });
+  }
+
+  $("#close-issues").click(function(e) {
+    e.preventDefault();
+    var request = $.ajax({
+      url: closeIssuesEndpoint,
+      type: "POST",
+      data: data,
+      beforeSend: function() {
+        $(".notifications").html("Deleting issues").show();
+      },
+      complete: function(response) {
+        if (response.status == 200) {
+          notify("Issues closed..");
+        } else {
+          notify("Error closing some issues..");
+        }
+      }
+    });
+  });
 }
 
 /**
@@ -298,4 +336,6 @@ $(window).load(function() {
   toggleDoneColumn();
   retainPreviousSetting();
   setupNotification();
+  closeIssues();
+  $(".notifications").hide();
 });
