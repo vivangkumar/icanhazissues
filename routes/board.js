@@ -76,6 +76,7 @@ function _checkLabelMatches(issue, label) {
 router.get('/:owner/:repo', util.isAuthenticated, function(req, res, next) {
   var repoName = req.params.repo;
   var owner = req.params.owner;
+  var repoURL = 'https://github.com/' + owner + '/' + repoName;
 
   var request = new Request(
     '/repos/'+ owner + '/'+ repoName + '/issues?state=open&per_page=100',
@@ -125,6 +126,7 @@ router.get('/:owner/:repo', util.isAuthenticated, function(req, res, next) {
       var sortedCategorizedIssues = util.sortObject(categorizedIssues.categorizedIssues);
 
       res.render('board', {
+        repoURL: repoURL,
         issues: sortedCategorizedIssues,
         milestones: milestones,
         columns: config.boardColumns,

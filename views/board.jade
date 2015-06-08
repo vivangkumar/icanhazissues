@@ -47,7 +47,7 @@ block content
     div(class='container-fluid')
       div(class='row heading-row')
         div(class='milestone-heading')
-          p(class='milestone-heading-text') #{key}
+          a(class='milestone-heading-text' href='#{repoURL}/milestones/#{key}') #{key}
         each v, k in val
           div(class='col-md-3 board-columns' id='#{dash(key)}-#{k}-column')
             div(class='panel board-panel panel-default')
