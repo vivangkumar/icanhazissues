@@ -244,3 +244,7 @@ a:hover {
   text-align: center;
   background-color: #D64541;
 }
+
+.milestone-link:link, .milestone-link:hover, .milestone-link:visited, .milestone-link:active {
+  text-decoration: none;
+}
