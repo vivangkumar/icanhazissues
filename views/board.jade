@@ -30,7 +30,7 @@ block content
   -    }
   -  }
   - }
-  
+
   nav(class='navbar navbar-default navbar-fixed-top board-navbar')
     div(class='container-fluid retrospective-container')
       div(class='notifications col-md-12')
@@ -47,7 +47,11 @@ block content
     div(class='container-fluid')
       div(class='row heading-row')
         div(class='milestone-heading')
-          a(class='milestone-heading-text' href='#{repoURL}/milestones/#{key}') #{key}
+          p(class='milestone-heading-text')
+            if key !== 'uncategorized'
+              a(class='milestone-link' href='#{repoURL}/milestones/#{key}' target='_blank') #{key}
+            else
+              a(class='milestone-link' href='#{repoURL}/issues?q=is:open+is:issue+no:milestone' target='_blank') #{key}
         each v, k in val
           div(class='col-md-3 board-columns' id='#{dash(key)}-#{k}-column')
             div(class='panel board-panel panel-default')
