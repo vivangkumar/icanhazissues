@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var Request = require('../lib/request');
 var Eventinator = require('../lib/eventinator');
+var async = require('async');
 
 var config = CONFIG;
 
@@ -58,7 +59,7 @@ router.post('/:owner/:repo/update/:issue', function(req, res, next) {
 router.post('/:owner/:repo/close', function(req, res, next) {
   var repoName = req.params.repo;
   var owner = req.params.owner;
-  var issueNumbers = req.body.issueNumbers;
+  var issueNumbers = JSON.parse(req.body.issueNumbers);
   var urls = [];
   var results = [];
 
@@ -66,8 +67,7 @@ router.post('/:owner/:repo/close', function(req, res, next) {
     urls.push('/repos/' + owner + '/' + repoName + '/issues/' + issueNumbers[i]);
   }
 
-  var syncCalls = function () {
-    var url = urls.pop();
+  async.each(urls, function(url, callback) {
     var request = new Request(
       url,
       'PATCH',
@@ -78,22 +78,19 @@ router.post('/:owner/:repo/close', function(req, res, next) {
     request.do(function(error, response, body) {
       if (response.statusCode == 200) {
         results.push(response);
+        callback();
+      } else {
+        callback('Unexpected response code from Github when closing an issue');
       }
     });
-
-    if(urls.length) {
-      syncCalls(urls);
+  }, function(err) {
+    if (err) {
+      res.status(500).send(JSON.stringify({ error: 'Failed to close some issues' }));
     } else {
-      if (results.length == urls.length) {
-        res.status(200).send(JSON.stringify({ message: 'Issues closed' }));
-        _removeDoneCards(repoName, owner);
-      } else {
-        res.status(500).send(JSON.stringify({ error: 'Failed to close some issues' }));
-      }
+      res.status(200).send(JSON.stringify({ message: 'Issues closed' }));
+      _removeDoneCards(repoName, owner);
     }
-  }
-
-  syncCalls();
+  })
 });
 
 /**
