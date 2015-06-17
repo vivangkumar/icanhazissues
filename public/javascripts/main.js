@@ -55,9 +55,11 @@ channel.bind('client-issue-updates', function(data) {
 
 var serverChannel = pusher.subscribe(repositoryName + '-' + ownerName + '-server-updates');
 serverChannel.bind('remove-done-cards', function(data) {
-  setTimeout(function() {
-    location.reload();
-  }, 1000);
+  if (data.status) {
+    $('.notifications').html("Deleted issue number " + data.issueNumber);
+  } else {
+    $('.notifications').html("Failed to delete issue number " + data.issueNumber);
+  }
 });
 
 var issueGroups = document.getElementsByClassName('issue-list-group');
@@ -248,6 +250,9 @@ function closeIssues() {
 
   var notify = function(text) {
     $(".notifications").html(text).fadeOut(1000);
+    setTimeout(function() {
+      location.reload();
+    }, 1000);
   }
 
   $("#close-issues").click(function(e) {
