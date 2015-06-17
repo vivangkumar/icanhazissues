@@ -76,10 +76,12 @@ router.post('/:owner/:repo/close', function(req, res, next) {
     );
 
     request.do(function(error, response, body) {
+      var issueNumber = url.split("/")[5];
       if (response.statusCode == 200) {
-        results.push(response);
+        _removeDoneCards(repoName, owner, issueNumber, true);
         callback();
       } else {
+        _removeDoneCards(repoName, owner, issueNumber, false);
         callback('Unexpected response code from Github when closing an issue');
       }
     });
@@ -88,7 +90,6 @@ router.post('/:owner/:repo/close', function(req, res, next) {
       res.status(500).send(JSON.stringify({ error: 'Failed to close some issues' }));
     } else {
       res.status(200).send(JSON.stringify({ message: 'Issues closed' }));
-      _removeDoneCards(repoName, owner);
     }
   })
 });
@@ -113,9 +114,14 @@ function _sendToEventinator(details) {
 }
 
 
-function _removeDoneCards(repoName, ownerName) {
+function _removeDoneCards(repoName, ownerName, issueNumber, status) {
   var pusher = PUSHER;
-  pusher.trigger(repoName + '-' + ownerName + '-server-updates', 'remove-done-cards', {});
+  var data = {
+    status: status,
+    issueNumber: issueNumber
+  };
+
+  pusher.trigger(repoName + '-' + ownerName + '-server-updates', 'remove-done-cards', data);
 }
 
 module.exports = router;
