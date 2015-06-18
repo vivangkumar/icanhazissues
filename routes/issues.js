@@ -61,7 +61,7 @@ router.post('/:owner/:repo/close', function(req, res, next) {
   var owner = req.params.owner;
   var issueNumbers = JSON.parse(req.body.issueNumbers);
   var urls = [];
-  var results = [];
+  var errors = [];
 
   for(var i = 0; i < issueNumbers.length; i++) {
     urls.push('/repos/' + owner + '/' + repoName + '/issues/' + issueNumbers[i]);
@@ -82,11 +82,12 @@ router.post('/:owner/:repo/close', function(req, res, next) {
         callback();
       } else {
         _removeDoneCards(repoName, owner, issueNumber, false);
-        callback('Unexpected response code from Github when closing an issue');
+        errors.push(issueNumber);
+        callback();
       }
     });
   }, function(err) {
-    if (err) {
+    if (errors.length > 1) {
       res.status(500).send(JSON.stringify({ error: 'Failed to close some issues' }));
     } else {
       res.status(200).send(JSON.stringify({ message: 'Issues closed' }));
