@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var Request = require('../lib/request');
 var Eventinator = require('../lib/eventinator');
+var async = require('async');
 
 var config = CONFIG;
 
@@ -58,16 +59,15 @@ router.post('/:owner/:repo/update/:issue', function(req, res, next) {
 router.post('/:owner/:repo/close', function(req, res, next) {
   var repoName = req.params.repo;
   var owner = req.params.owner;
-  var issueNumbers = req.body.issueNumbers;
+  var issueNumbers = JSON.parse(req.body.issueNumbers);
   var urls = [];
-  var results = [];
+  var errors = [];
 
   for(var i = 0; i < issueNumbers.length; i++) {
     urls.push('/repos/' + owner + '/' + repoName + '/issues/' + issueNumbers[i]);
   }
 
-  var syncCalls = function () {
-    var url = urls.pop();
+  async.each(urls, function(url, callback) {
     var request = new Request(
       url,
       'PATCH',
@@ -76,24 +76,23 @@ router.post('/:owner/:repo/close', function(req, res, next) {
     );
 
     request.do(function(error, response, body) {
+      var issueNumber = url.split("/")[5];
       if (response.statusCode == 200) {
-        results.push(response);
+        _removeDoneCards(repoName, owner, issueNumber, true);
+        callback();
+      } else {
+        _removeDoneCards(repoName, owner, issueNumber, false);
+        errors.push(issueNumber);
+        callback();
       }
     });
-
-    if(urls.length) {
-      syncCalls(urls);
+  }, function(err) {
+    if (errors.length > 1) {
+      res.status(500).send(JSON.stringify({ error: 'Failed to close some issues' }));
     } else {
-      if (results.length == urls.length) {
-        res.status(200).send(JSON.stringify({ message: 'Issues closed' }));
-        _removeDoneCards(repoName, owner);
-      } else {
-        res.status(500).send(JSON.stringify({ error: 'Failed to close some issues' }));
-      }
+      res.status(200).send(JSON.stringify({ message: 'Issues closed' }));
     }
-  }
-
-  syncCalls();
+  })
 });
 
 /**
@@ -116,9 +115,14 @@ function _sendToEventinator(details) {
 }
 
 
-function _removeDoneCards(repoName, ownerName) {
+function _removeDoneCards(repoName, ownerName, issueNumber, status) {
   var pusher = PUSHER;
-  pusher.trigger(repoName + '-' + ownerName + '-server-updates', 'remove-done-cards', {});
+  var data = {
+    status: status,
+    issueNumber: issueNumber
+  };
+
+  pusher.trigger(repoName + '-' + ownerName + '-server-updates', 'remove-done-cards', data);
 }
 
 module.exports = router;
