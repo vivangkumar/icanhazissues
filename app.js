@@ -36,7 +36,8 @@ var index = require('./routes/index')
   , repo = require('./routes/repo')
   , board = require('./routes/board')
   , issues = require('./routes/issues')
-  , pusher = require('./routes/pusher');
+  , pusher = require('./routes/pusher')
+  , webhooks = require('./routes/webhooks');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -62,6 +63,7 @@ app.use('/repos', repo);
 app.use('/board', board);
 app.use('/issues', issues);
 app.use('/pusher', pusher);
+app.use('/webhooks', webhooks);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
