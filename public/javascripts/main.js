@@ -2,59 +2,53 @@
  * Main.js
  */
 
-/** PUSHER **/
-var pusher = new Pusher(pusherKey, {
-  authEndpoint: '/pusher/auth'
-});
-
 var repositoryName = window.location.pathname.split('/')[3];
 var ownerName = window.location.pathname.split('/')[2];
 
-var channel = pusher.subscribe('private-issues-' + repositoryName + '-' + ownerName);
-channel.bind('client-issue-updates', function(data) {
-  // Remove old card before appending new one
-  var cardToRemove = '#'+ data.fromLabel + '-' + data.issueNumber;
-  var fromLabel = data.fromLabel;
-  var toLabel = data.toLabel;
-  var toMilestone = data.toMilestone;
-  var fromMilestone = data.fromMilestone;
-  var fromCount = data.fromCount;
-  var toCount = data.toCount;
-  var issueLink = data.issueLink;
-  var issueTitle = data.issueTitle;
+/**
+ * Sync changes across Kanban boards using Pusher
+ */
+function pusherSync() {
+  var pusher = new Pusher(pusherKey, {
+    authEndpoint: '/pusher/auth'
+  });
 
-  $(cardToRemove).remove();
+  var syncChannelName = 'private-issues-' + repositoryName + '-' + ownerName;
+  var syncChannel = pusher.subscribe(syncChannelName);
+  syncChannel.bind('client-issue-updates', function(data) {
+    var fromLabel = data.fromLabel;
+    var toLabel = data.toLabel;
+    var toMilestone = data.toMilestone;
+    var fromMilestone = data.fromMilestone;
+    var fromCount = data.fromCount;
+    var toCount = data.toCount;
+    var issueLink = data.issueLink;
+    var issueTitle = data.issueTitle;
+    var issueNumber = data.issueNumber;
 
-  var milestoneClass = '.' + toMilestone + '-' + toLabel + '-list-group';
+    removeCard(fromLabel, issueNumber);
+    appendCard(toMilestone, toLabel, data.cardHtml);
 
-  if (toLabel == 'done') {
-    $('.' + toMilestone + '-done-badge').html(toCount);
-    $('.' + toMilestone + '-' + toLabel + '-list-group').attr('data-count', toCount);
-  }
-
-  if (fromLabel == 'done') {
-    $('.' + fromMilestone + '-' + fromLabel + '-list-group').attr('data-count', fromCount);
-    $('.' + fromMilestone + '-done-badge').html(fromCount);
-  }
-
-  // Append to the right list
-  $(milestoneClass).append(data.cardHtml);
-  if (toLabel == 'done') {
-    var relevantCard = $('.issue-list-item[data-issue-number=' + data.issueNumber +']');
-    if (localStorage.doneColumn == 'false') {
-      relevantCard.css('display', 'none');
-    } else {
-      relevantCard.css('display', 'block');
+    if (toLabel == 'done') {
+      updateIssueCount(toMilestone, toLabel, toCount);
+      var relevantCard = $('.issue-list-item[data-issue-number=' + data.issueNumber +']');
+      hideOrShowDoneCard(relevantCard);
     }
-  }
 
-  if (toLabel == 'review') {
-    triggerNotification(issueTitle, issueLink, toMilestone)
-  }
-});
+    if (fromLabel == 'done') {
+      updateIssueCount(fromMilestone, fromLabel, fromCount);
+    }
 
-var serverChannel = pusher.subscribe(repositoryName + '-' + ownerName + '-server-updates');
-serverChannel.bind('remove-done-cards', function(data) {
+    if (toLabel == 'review') {
+      triggerNotification(issueTitle, issueLink, toMilestone)
+    }
+  });
+}
+
+/** Pusher setup to get events when issues are bulk closed **/
+var serverUpdatesChannelName = repositoryName + '-' + ownerName + '-server-updates';
+var serverUpdatesChannel = pusher.subscribe(serverUpdatesChannelName);
+serverUpdatesChannel.bind('remove-done-cards', function(data) {
   if (data.status) {
     $('.notifications').html("Deleted issue number " + data.issueNumber);
   } else {
@@ -62,97 +56,138 @@ serverChannel.bind('remove-done-cards', function(data) {
   }
 });
 
-var issueGroups = document.getElementsByClassName('issue-list-group');
-var fromLabel = "";
-var toLabel = "";
-var fromMilestone = "";
-var toMilestone = "";
+/**
+ * Make cards movable and sortable
+ * Also take specific actions when moving cards
+ */
+function setupSortableCards() {
+  var issueGroups = document.getElementsByClassName('issue-list-group');
+  var fromLabel = "";
+  var toLabel = "";
+  var fromMilestone = "";
+  var toMilestone = "";
 
-for(var i = 0; i < issueGroups.length; i++) {
-  var issueMilestone = issueGroups[i].getAttribute('data-milestone');
+  for(var i = 0; i < issueGroups.length; i++) {
+    var issueMilestone = issueGroups[i].getAttribute('data-milestone');
 
-  /* Create sortable instance for each milestone, making them movable only
-   * within each milestone
-   */
-  Sortable.create(issueGroups[i], {
-    group: 'issue-' + issueMilestone,
-    animation: 150,
-    dragable: '.issue-list-item',
-    ghostClass: 'sortable-ghost',
-    filter: '.done-bucket',
-    onStart: function(event) {
-      var parentNode = event.item.parentNode;
-      fromLabel = parentNode.getAttribute('data-label');
-      fromMilestone = parentNode.getAttribute('data-milestone').replace(/ /g, '-');
-    },
-    onEnd: function(event) {
-      var issueNumber = event.item.getAttribute('data-issue-number');
-      var issueTitle = event.item.getElementsByTagName('a')[0].innerHTML;
-      var issueLink = event.item.getElementsByTagName('a')[0].href;
-      var parentNode = event.item.parentNode;
-      var blocked = false;
+    /* Create sortable instance for each milestone, making them movable only
+     * within each milestone
+     */
+    Sortable.create(issueGroups[i], {
+      group: 'issue-' + issueMilestone,
+      animation: 150,
+      dragable: '.issue-list-item',
+      ghostClass: 'sortable-ghost',
+      filter: '.done-bucket',
+      onStart: function(event) {
+        var parentNode = event.item.parentNode;
+        fromLabel = parentNode.getAttribute('data-label');
+        fromMilestone = parentNode.getAttribute('data-milestone').replace(/ /g, '-');
+      },
+      onEnd: function(event) {
+        var issueNumber = event.item.getAttribute('data-issue-number');
+        var issueTitle = event.item.getElementsByTagName('a')[0].innerHTML;
+        var issueLink = event.item.getElementsByTagName('a')[0].href;
+        var parentNode = event.item.parentNode;
+        var blocked = false;
 
-      toLabel = parentNode.getAttribute('data-label');
-      toMilestone = parentNode.getAttribute('data-milestone').replace(/ /g, '-');
+        toLabel = parentNode.getAttribute('data-label');
+        toMilestone = parentNode.getAttribute('data-milestone').replace(/ /g, '-');
 
-      if (event.item.getAttribute('data-blocked') == 'true') {
-        blocked = true;
-      }
+        if (event.item.getAttribute('data-blocked') == 'true') {
+          blocked = true;
+        }
 
-      // Card that is to be updated and synced
-      var cardMoved = {
-        issueNumber: issueNumber,
-        issueTitle: issueTitle,
-        fromMilestone: fromMilestone,
-        toMilestone: toMilestone,
-        fromLabel: fromLabel,
-        toLabel: toLabel,
-        issueLink: issueLink
-      };
+        // Card that is to be updated and synced using Pusher
+        var cardMoved = {
+          issueNumber: issueNumber,
+          issueTitle: issueTitle,
+          fromMilestone: fromMilestone,
+          toMilestone: toMilestone,
+          fromLabel: fromLabel,
+          toLabel: toLabel,
+          issueLink: issueLink
+        };
 
-      if(fromLabel != toLabel && fromMilestone == toMilestone) {
-        var toCount = parseInt(parentNode.getAttribute('data-count'));
-        parentNode.setAttribute('data-count', toCount + 1);
+        // ** TODO **
+        if(fromLabel != toLabel && fromMilestone == toMilestone) {
+          var toCount = parseInt(parentNode.getAttribute('data-count'));
+          parentNode.setAttribute('data-count', toCount + 1);
 
-        var fromCount = parseInt(document.getElementsByClassName(fromMilestone + "-" + fromLabel + "-list-group")[0].getAttribute('data-count'));
-        document.getElementsByClassName(fromMilestone + "-" + fromLabel + "-list-group")[0].setAttribute('data-count', fromCount - 1);
+          var fromCount = parseInt(document.getElementsByClassName(fromMilestone + "-" + fromLabel + "-list-group")[0].getAttribute('data-count'));
+          document.getElementsByClassName(fromMilestone + "-" + fromLabel + "-list-group")[0].setAttribute('data-count', fromCount - 1);
 
-        if (toLabel == 'done') {
-          if (localStorage.doneColumn == 'false') {
-            event.item.style.display = 'none';
+          if (toLabel == 'done') {
+            if (localStorage.doneColumn == 'false') {
+              event.item.style.display = 'none';
+            }
+
+            $('.' + toMilestone + '-done-badge').html(toCount + 1);
+            event.item.classList.add('issue-list-item-done');
+            event.item.classList.remove('issue-list-item-' + fromLabel);
           }
 
-          $('.' + toMilestone + '-done-badge').html(toCount + 1);
-          event.item.classList.add('issue-list-item-done');
-          event.item.classList.remove('issue-list-item-' + fromLabel);
+          if (fromLabel == 'done') {
+            event.item.classList.remove('issue-list-item-done');
+            event.item.classList.add('issue-list-item-' + toLabel);
+            $('.' + fromMilestone + '-done-badge').html(fromCount - 1);
+          }
+
+          event.item.setAttribute('id', toLabel + '-' + issueNumber);
+
+          cardMoved['cardHtml'] = event.item.outerHTML;
+          cardMoved['fromCount'] = fromCount - 1;
+          cardMoved['toCount'] = toCount + 1;
+          // Trigger pusher event and update issue on github
+          channel.trigger('client-issue-updates', cardMoved);
+          updateIssue(issueNumber, fromLabel, toLabel, blocked, issueTitle);
         }
-
-        if (fromLabel == 'done') {
-          event.item.classList.remove('issue-list-item-done');
-          event.item.classList.add('issue-list-item-' + toLabel);
-          $('.' + fromMilestone + '-done-badge').html(fromCount - 1);
-        }
-
-        event.item.setAttribute('id', toLabel + '-' + issueNumber);
-
-        cardMoved['cardHtml'] = event.item.outerHTML;
-        cardMoved['fromCount'] = fromCount - 1;
-        cardMoved['toCount'] = toCount + 1;
-        // Trigger pusher event and update issue on github
-        channel.trigger('client-issue-updates', cardMoved);
-        updateIssue(issueNumber, fromLabel, toLabel, blocked, issueTitle);
       }
-    }
-  });
+    });
+  }
+}
+
+/**
+ * Remove a card associated with a label
+ * having an issue number
+ */
+function removeCard(fromLabel, issueNumber) {
+  var card = '#'+ fromLabel + '-' + issueNumber;
+  $(card).remove();
+}
+
+/**
+ * Append a card to a new list
+ */
+function appendCard(milestone, label, cardHtml) {
+  var listGroup = "." + milestone + '-' + label + '-list-group';
+  $(listGroup).append(cardHtml);
+}
+
+/**
+ * Update issue count for a milestone
+ */
+function updateIssueCount(milestone, label, count) {
+  $('.' + milestone + '-done-badge').html(count);
+  $('.' + milestone + '-' + label + '-list-group').attr('data-count', count);
+}
+
+/**
+ * Decide whether we show or hide cards in the done column
+ * based on the local storage setting
+ */
+function hideOrShowDoneCard(card) {
+  if (localStorage.doneColumn == 'false') {
+    card.css('display', 'none');
+  } else {
+    card.css('display', 'block');
+  }
 }
 
 /**
  * Update issue on Github.
- * @param issueNumber
- * @param oldLabel
- * @param newLabel
- * @param blocked
- * @returns boolean
+ * Set up as an AJAX call to the server which
+ * will then update the issue
  */
 function updateIssue(issueNumber, oldLabel, newLabel, blocked, issueTitle) {
   var ISSUE_ENDPOINT = '/issues/' + ownerName + '/' + repositoryName + '/update/' +issueNumber;
@@ -178,7 +213,6 @@ function updateIssue(issueNumber, oldLabel, newLabel, blocked, issueTitle) {
 
 /**
  * Get colours for issues based on date.
- * @param date
  */
 function getColourCode(date) {
   var date = new Date(date);
@@ -237,6 +271,9 @@ function addMenu() {
   );
 }
 
+/**
+ * Bulk close issues
+ */
 function closeIssues() {
   var closeIssuesEndpoint = '/issues/' + ownerName + '/' + repositoryName + '/close';
   var issueNumbers = [];
@@ -290,6 +327,9 @@ function addNewIssueButton() {
   );
 }
 
+/**
+ * Toggle viewing items in the done column
+ */
 function toggleDoneColumn() {
   $('.toggle-done').click(function() {
     if (localStorage.doneColumn == 'false') {
@@ -308,6 +348,10 @@ function toggleDoneColumn() {
   });
 }
 
+/**
+ * Toggle colour of the hide done column link
+ * depending on the settings in localStorage
+ */
 function retainPreviousSetting() {
   if (localStorage.doneColumn == 'false') {
     $('.done-bucket').css('display', 'block');
@@ -316,6 +360,9 @@ function retainPreviousSetting() {
   }
 }
 
+/**
+ * Set up the web notifications API.
+ */
 function setupNotification() {
   if (!Notification) {
     console.log("This browser does not support notifications")
@@ -324,6 +371,9 @@ function setupNotification() {
   if (Notification.permission !== "granted") Notification.requestPermission();
 }
 
+/**
+ * Send a notification when a card is moved to review
+ **/
 function triggerNotification(issueTitle, issueLink, issueMilestone) {
   var notification = new Notification(issueTitle + " is ready to be reviewed!", {
     tag: 'icanhazissues-review-notification',
@@ -341,6 +391,7 @@ function triggerNotification(issueTitle, issueLink, issueMilestone) {
 }
 
 $(window).load(function() {
+  setupSortableCards();
   addMenu();
   addNewIssueButton();
   assignColourCode();
