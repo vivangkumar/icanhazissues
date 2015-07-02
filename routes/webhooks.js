@@ -6,7 +6,7 @@ var config = CONFIG;
 function handleEvent (body) {
   var eventMap = {
     reopened: function(body) {
-      console.log(body);
+
     }
   }
 
