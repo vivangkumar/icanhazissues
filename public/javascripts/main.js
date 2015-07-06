@@ -5,16 +5,16 @@
 var repositoryName = window.location.pathname.split('/')[3];
 var ownerName = window.location.pathname.split('/')[2];
 
+var pusher = new Pusher(pusherKey, {
+  authEndpoint: '/pusher/auth'
+});
+var syncChannelName = 'private-issues-' + repositoryName + '-' + ownerName;
+var syncChannel = pusher.subscribe(syncChannelName);
+
 /**
  * Sync changes across Kanban boards using Pusher
  */
 function pusherSync() {
-  var pusher = new Pusher(pusherKey, {
-    authEndpoint: '/pusher/auth'
-  });
-
-  var syncChannelName = 'private-issues-' + repositoryName + '-' + ownerName;
-  var syncChannel = pusher.subscribe(syncChannelName);
   syncChannel.bind('client-issue-updates', function(data) {
     var fromLabel = data.fromLabel;
     var toLabel = data.toLabel;
@@ -29,14 +29,18 @@ function pusherSync() {
     removeCard(fromLabel, issueNumber);
     appendCard(toMilestone, toLabel, data.cardHtml);
 
+    updateIssueCount(toMilestone, toLabel, toCount);
+    updateIssueCount(fromMilestone, fromLabel, fromCount);
+
     if (toLabel == 'done') {
-      updateIssueCount(toMilestone, toLabel, toCount);
+      updateDoneBadge(toMilestone, toCount);
+
       var relevantCard = $('.issue-list-item[data-issue-number=' + data.issueNumber +']');
       hideOrShowDoneCard(relevantCard);
     }
 
     if (fromLabel == 'done') {
-      updateIssueCount(fromMilestone, fromLabel, fromCount);
+      updateDoneBadge(fromMilestone, fromCount);
     }
 
     if (toLabel == 'review') {
@@ -99,7 +103,7 @@ function setupSortableCards() {
         }
 
         // Card that is to be updated and synced using Pusher
-        var cardMoved = {
+        var movedCard = {
           issueNumber: issueNumber,
           issueTitle: issueTitle,
           fromMilestone: fromMilestone,
@@ -109,37 +113,35 @@ function setupSortableCards() {
           issueLink: issueLink
         };
 
-        // ** TODO **
         if(fromLabel != toLabel && fromMilestone == toMilestone) {
           var toCount = parseInt(parentNode.getAttribute('data-count'));
           parentNode.setAttribute('data-count', toCount + 1);
 
           var fromCount = parseInt(document.getElementsByClassName(fromMilestone + "-" + fromLabel + "-list-group")[0].getAttribute('data-count'));
-          document.getElementsByClassName(fromMilestone + "-" + fromLabel + "-list-group")[0].setAttribute('data-count', fromCount - 1);
+          updateIssueCount(fromMilestone, fromLabel, (fromCount - 1));
 
           if (toLabel == 'done') {
             if (localStorage.doneColumn == 'false') {
-              event.item.style.display = 'none';
+              hideDoneCard(event.item);
             }
 
-            $('.' + toMilestone + '-done-badge').html(toCount + 1);
-            event.item.classList.add('issue-list-item-done');
-            event.item.classList.remove('issue-list-item-' + fromLabel);
+            updateDoneBadge(toMilestone, (toCount + 1));
+            switchToDoneLabel(event.item, fromLabel);
           }
 
           if (fromLabel == 'done') {
-            event.item.classList.remove('issue-list-item-done');
-            event.item.classList.add('issue-list-item-' + toLabel);
-            $('.' + fromMilestone + '-done-badge').html(fromCount - 1);
+            switchFromDoneLabel(event.item, toLabel);
+            updateDoneBadge(fromMilestone, (fromCount - 1));
           }
 
-          event.item.setAttribute('id', toLabel + '-' + issueNumber);
+          updateCardId(event.item, toLabel, issueNumber);
 
-          cardMoved['cardHtml'] = event.item.outerHTML;
-          cardMoved['fromCount'] = fromCount - 1;
-          cardMoved['toCount'] = toCount + 1;
+          movedCard['cardHtml'] = event.item.outerHTML;
+          movedCard['fromCount'] = fromCount - 1;
+          movedCard['toCount'] = toCount + 1;
+
           // Trigger pusher event and update issue on github
-          channel.trigger('client-issue-updates', cardMoved);
+          syncChannel.trigger('client-issue-updates', movedCard);
           updateIssue(issueNumber, fromLabel, toLabel, blocked, issueTitle);
         }
       }
@@ -168,8 +170,15 @@ function appendCard(milestone, label, cardHtml) {
  * Update issue count for a milestone
  */
 function updateIssueCount(milestone, label, count) {
-  $('.' + milestone + '-done-badge').html(count);
   $('.' + milestone + '-' + label + '-list-group').attr('data-count', count);
+}
+
+/**
+ * Update the issue count
+ * when the done badge is shown
+ */
+function updateDoneBadge(milestone, count) {
+  $('.' + milestone + '-done-badge').html(count);
 }
 
 /**
@@ -182,6 +191,37 @@ function hideOrShowDoneCard(card) {
   } else {
     card.css('display', 'block');
   }
+}
+
+/**
+ * Update the card `id` attribute
+ */
+function updateCardId(card, label, issueNumber) {
+  $(card).attr('id', label + '-' + issueNumber);
+}
+
+/**
+ * Hide a card in the done column if
+ * localStorage option is set
+ */
+function hideDoneCard(card) {
+  $(card).css('display', 'none');
+}
+
+/**
+ * Change a card label to `done`
+ */
+function switchToDoneLabel(card, label) {
+  $(card).addClass('issue-list-item-done');
+  $(card).removeClass('issue-list-item-' + label);
+}
+
+/**
+ * Change a card label from `done`
+ */
+function switchFromDoneLabel(card, label) {
+  $(card).removeClass('issue-list-item-done');
+  $(card).addClass('issue-list-item-' + label);
 }
 
 /**
@@ -373,7 +413,7 @@ function setupNotification() {
 
 /**
  * Send a notification when a card is moved to review
- **/
+ */
 function triggerNotification(issueTitle, issueLink, issueMilestone) {
   var notification = new Notification(issueTitle + " is ready to be reviewed!", {
     tag: 'icanhazissues-review-notification',
@@ -392,6 +432,7 @@ function triggerNotification(issueTitle, issueLink, issueMilestone) {
 
 $(window).load(function() {
   setupSortableCards();
+  pusherSync();
   addMenu();
   addNewIssueButton();
   assignColourCode();
