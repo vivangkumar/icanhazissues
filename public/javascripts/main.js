@@ -177,7 +177,7 @@ function githubSync() {
   });
 
   githubSyncChannel.bind('closed', function(data) {
-    console.log(data);
+    closeIssue(data);
   });
 
   githubSyncChannel.bind('reopened', function(data) {
@@ -216,15 +216,39 @@ function unassignIssue(data) {
 }
 
 /**
+ * Remove the card when closed on Github.
+ */
+function closeIssue(data) {
+  var card = selectCard(data);
+  card.remove();
+
+  var milestone = data.issue.milestone || 'uncategorized';
+  milestone.replace(/ /g, '-');
+
+  var milestoneGroup = selectMilestone(data);
+  var currentCardCount = milestoneGroup.attr('data-count');
+  milestoneGroup.attr('data-count', (currentCardCount - 1));
+  updateDoneBadge(milestone, (currentCardCount - 1));
+}
+
+/*******************************************************************************************/
+
+/**
  * Return a card based on attributes
  */
 function selectCard(data) {
+  return $('.issue-list-item[data-issue-number=' + data.issue.number +']');
+}
+
+/**
+ * Return the milestone group
+ */
+function selectMilestone(data) {
   var label = data.issue.labels[0].name;
   var milestone = data.issue.milestone || 'uncategorized';
   milestone.replace(/ /g, '-');
 
-  var milestoneGroup = $('.' + milestone + '-' + label + '-list-group');
-  return $('.issue-list-item[data-issue-number=' + data.issue.number +']');
+  return $('.' + milestone + '-' + label + '-list-group');
 }
 
 /**
