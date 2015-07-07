@@ -78,10 +78,8 @@ router.post('/:owner/:repo/close', function(req, res, next) {
     request.do(function(error, response, body) {
       var issueNumber = url.split("/")[5];
       if (response.statusCode == 200) {
-        _removeDoneCards(repoName, owner, issueNumber, true);
         callback();
       } else {
-        _removeDoneCards(repoName, owner, issueNumber, false);
         errors.push(issueNumber);
         callback();
       }
@@ -112,17 +110,6 @@ function _sendToEventinator(details) {
       console.log('Unexpected HTTP code from Eventinator: ' + response.statusCode);
     }
   });
-}
-
-
-function _removeDoneCards(repoName, ownerName, issueNumber, status) {
-  var pusher = PUSHER;
-  var data = {
-    status: status,
-    issueNumber: issueNumber
-  };
-
-  pusher.trigger(repoName + '-' + ownerName + '-server-updates', 'remove-done-cards', data);
 }
 
 module.exports = router;

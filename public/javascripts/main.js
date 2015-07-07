@@ -49,17 +49,6 @@ function pusherSync() {
   });
 }
 
-/** Pusher setup to get events when issues are bulk closed **/
-var serverUpdatesChannelName = repositoryName + '-' + ownerName + '-server-updates';
-var serverUpdatesChannel = pusher.subscribe(serverUpdatesChannelName);
-serverUpdatesChannel.bind('remove-done-cards', function(data) {
-  if (data.status) {
-    $('.notifications').html("Deleted issue number " + data.issueNumber);
-  } else {
-    $('.notifications').html("Failed to delete issue number " + data.issueNumber);
-  }
-});
-
 /**
  * Make cards movable and sortable
  * Also take specific actions when moving cards
@@ -126,14 +115,13 @@ function setupSortableCards() {
             }
 
             updateDoneBadge(toMilestone, (toCount + 1));
-            switchToDoneLabel(event.item, fromLabel);
           }
 
           if (fromLabel == 'done') {
-            switchFromDoneLabel(event.item, toLabel);
             updateDoneBadge(fromMilestone, (fromCount - 1));
           }
 
+          switchLabels(event.item, fromLabel, toLabel);
           updateCardId(event.item, toLabel, issueNumber);
 
           movedCard['cardHtml'] = event.item.outerHTML;
@@ -313,17 +301,9 @@ function hideDoneCard(card) {
 /**
  * Change a card label to `done`
  */
-function switchToDoneLabel(card, label) {
-  $(card).addClass('issue-list-item-done');
-  $(card).removeClass('issue-list-item-' + label);
-}
-
-/**
- * Change a card label from `done`
- */
-function switchFromDoneLabel(card, label) {
-  $(card).removeClass('issue-list-item-done');
-  $(card).addClass('issue-list-item-' + label);
+function switchLabels(card, fromLabel, toLabel) {
+  $(card).addClass('issue-list-item-' + toLabel);
+  $(card).removeClass('issue-list-item-' + fromLabel);
 }
 
 /**
@@ -429,9 +409,6 @@ function closeIssues() {
 
   var notify = function(text) {
     $(".notifications").html(text).fadeOut(1000);
-    setTimeout(function() {
-      location.reload();
-    }, 1000);
   }
 
   $("#close-issues").click(function(e) {
