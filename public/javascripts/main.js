@@ -53,6 +53,14 @@ function setupSortableCards() {
 
         if(fromLabel != toLabel && fromMilestone == toMilestone) {
           updateIssue(issueNumber, fromLabel, toLabel, blocked, issueTitle);
+          var milestone = toMilestone;
+
+          var fromCount = getCount(milestone, fromLabel);
+          var toCount = getCount(milestone, toLabel);
+
+          if (toLabel == 'done') {
+            hideOrShowDoneCard($(event.item));
+          }
         }
       }
     });
@@ -81,8 +89,8 @@ function githubSync() {
     removeCard(fromLabel, data.issue.number);
     appendCard(milestone, toLabel, card);
 
-    var fromCount = parseInt($('.' + milestone + '-' + fromLabel + '-list-group').attr('data-count'));
-    var toCount = parseInt($('.' + milestone + '-' + toLabel + '-list-group').attr('data-count'));
+    var fromCount = getCount(milestone, fromLabel);
+    var toCount = getCount(milestone, toLabel);
 
     updateIssueCount(milestone, toLabel, (toCount + 1));
     updateIssueCount(milestone, fromLabel, (fromCount - 1));
@@ -91,19 +99,13 @@ function githubSync() {
     updateCardId(card, toLabel, data.issue.number);
 
     if (toLabel == 'done') {
-      console.log(milestone, toCount);
-      updateDoneBadge(milestone, toCount);
-
-      var relevantCard = selectCard(data);
-      hideOrShowDoneCard(relevantCard);
+      updateDoneBadge(milestone, (toCount + 1));
+      hideOrShowDoneCard(card);
     }
 
     if (fromLabel == 'done') {
-      updateDoneBadge(milestone, fromCount);
-    }
-
-    if (toLabel == 'review') {
-      triggerNotification(data.issue.title, data.issue.html_url, milestone)
+      updateDoneBadge(milestone, (fromCount - 1));
+      card.css('display', 'block');
     }
   });
 
@@ -259,6 +261,13 @@ function hideDoneCard(card) {
 function switchLabels(card, fromLabel, toLabel) {
   $(card).addClass('issue-list-item-' + toLabel);
   $(card).removeClass('issue-list-item-' + fromLabel);
+}
+
+/**
+ * Get the `data-coount` attribute
+ */
+function getCount(milestone, label) {
+  return parseInt($('.' + milestone + '-' + label + '-list-group').attr('data-count'));
 }
 
 /**
@@ -434,46 +443,14 @@ function retainPreviousSetting() {
   }
 }
 
-/**
- * Set up the web notifications API.
- */
-function setupNotification() {
-  if (!Notification) {
-    console.log("This browser does not support notifications")
-  }
-
-  if (Notification.permission !== "granted") Notification.requestPermission();
-}
-
-/**
- * Send a notification when a card is moved to review
- */
-function triggerNotification(issueTitle, issueLink, issueMilestone) {
-  var notification = new Notification(issueTitle + " is ready to be reviewed!", {
-    tag: 'icanhazissues-review-notification',
-    body: "Card has been moved to the review column for the " + issueMilestone
-          + " milestone."
-  });
-
-  notification.onclick = function() {
-    window.open(issueLink);
-  }
-
-  notification.onshow = function() {
-    setTimeout(notification.close.bind(notification), 10000);
-  }
-}
-
 $(window).load(function() {
   setupSortableCards();
-  //pusherSync();
   addMenu();
   addNewIssueButton();
   assignColourCode();
   addBlockedLabel();
   toggleDoneColumn();
   retainPreviousSetting();
-  setupNotification();
   closeIssues();
   $(".notifications").hide();
   githubSync();
