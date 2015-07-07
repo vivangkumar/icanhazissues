@@ -142,12 +142,26 @@ function setupSortableCards() {
 
           // Trigger pusher event and update issue on github
           syncChannel.trigger('client-issue-updates', movedCard);
-          updateIssue(issueNumber, fromLabel, toLabel, blocked, issueTitle);
+          //updateIssue(issueNumber, fromLabel, toLabel, blocked, issueTitle);
         }
       }
     });
   }
 }
+
+/**
+ * Handle pusher events and update the board
+ * to keep in sync with Github
+ */
+function githubSync() {
+  var channelName = repositoryName + '-' + ownerName + '-githubsync';
+  var githubSyncChannel = pusher.subscribe(channelName);
+  githubSyncChannel.bind('labeled', function(data) {
+    console.log(data);
+  });
+}
+
+/*******************************************************************************************/
 
 /**
  * Remove a card associated with a label
@@ -442,4 +456,5 @@ $(window).load(function() {
   setupNotification();
   closeIssues();
   $(".notifications").hide();
+  githubSync();
 });

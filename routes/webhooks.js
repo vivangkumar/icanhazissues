@@ -8,7 +8,7 @@ var pusher = PUSHER;
  * Use pusher to broadcast changes to frontend
  */
 function githubSync(owner, repo, event, data) {
-  var channelName = owner + '-' + repo + '-' + 'githubsync';
+  var channelName = repo + '-' +owner + '-githubsync';
   pusher.trigger(channelName, event, data);
 }
 
