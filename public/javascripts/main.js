@@ -159,9 +159,73 @@ function githubSync() {
   githubSyncChannel.bind('labeled', function(data) {
     console.log(data);
   });
+
+  githubSyncChannel.bind('unlabeled', function(data) {
+    console.log(data);
+  });
+
+  githubSyncChannel.bind('assigned', function(data) {
+    assignIssue(data);
+  });
+
+  githubSyncChannel.bind('unassigned', function(data) {
+    unassignIssue(data);
+  });
+
+  githubSyncChannel.bind('opened', function(data) {
+    console.log(data);
+  });
+
+  githubSyncChannel.bind('closed', function(data) {
+    console.log(data);
+  });
+
+  githubSyncChannel.bind('reopened', function(data) {
+    console.log(data);
+  });
 }
 
 /*******************************************************************************************/
+
+/**
+ * Append the assignee image to a card when updated
+ * on Github.
+ */
+function assignIssue(data) {
+  var card = selectCard(data);
+  card.find(".issue-text").removeClass("col-xs-12").addClass("col-xs-8");
+  var assigneeHtml = '<div class="issue-assignee col-xs-4 pull-right">' +
+                        '<span class="pull-right">' +
+                          '<img src="'+ data.issue.assignee.avatar_url + '&s=35' +'" class="img-circle avatar">' +
+                        '</span>' +
+                      '</div>';
+  // Append only if the element does not already exist
+  if (!card.find(".issue-assignee").length) {
+    card.append(assigneeHtml);
+  }
+}
+
+/**
+ * Remove the assignee image to a card when updated
+ * on Github.
+ */
+function unassignIssue(data) {
+  var card = selectCard(data);
+  card.find(".issue-text").removeClass("col-xs-8").addClass("col-xs-12");
+  card.find(".issue-assignee").remove();
+}
+
+/**
+ * Return a card based on attributes
+ */
+function selectCard(data) {
+  var label = data.issue.labels[0].name;
+  var milestone = data.issue.milestone || 'uncategorized';
+  milestone.replace(/ /g, '-');
+
+  var milestoneGroup = $('.' + milestone + '-' + label + '-list-group');
+  return $('.issue-list-item[data-issue-number=' + data.issue.number +']');
+}
 
 /**
  * Remove a card associated with a label
