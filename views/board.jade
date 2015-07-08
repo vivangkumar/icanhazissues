@@ -44,7 +44,7 @@ block content
           div(class='col-md-3 heading-column') #{col}
 
   each val, key in issues
-    div(class='container-fluid')
+    div(class='container-fluid #{key}-container milestone-container-fluid')
       div(class='row heading-row')
         div(class='milestone-heading')
           p(class='milestone-heading-text')
