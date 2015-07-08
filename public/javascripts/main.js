@@ -190,20 +190,20 @@ function closeIssue(data) {
  */
 function addNewCard(data, label) {
   var milestone = getMilestoneName(data);
-  var card = $('.issue-list-item:first').clone();
+  var card = $('<li></li>');
 
   $(card).attr('data-updated', data.issue.updated_at);
   $(card).attr('data-issue-number', data.issue.number);
   $(card).attr('id', label + '-' + data.issue.number);
-  $(card).removeAttr('class');
   $(card).addClass('list-group-item').addClass('issue-list-item').addClass('issue-list-item-' + label);
 
   var count = getCount(milestone, label);
   updateIssueCount(milestone, label, (count + 1));
 
-  $(card).find(".issue-text").html(
-    '<a href="'+ data.issue.html_url +'" target="_blank">'+ data.issue.title +'</a>'
-  );
+  $(card).append(
+    '<div class="issue-text col-xs-12">' +
+      '<a href="'+ data.issue.html_url +'" target="_blank">'+ data.issue.title +'</a>' +
+    '</div>');
 
   $(card).find(".issue-assignee").remove();
   appendCard(milestone, label, card);
@@ -211,6 +211,8 @@ function addNewCard(data, label) {
   if (data.issue.assignee) {
     assignIssue(data);
   }
+
+  assignColourCode();
 }
 
 /*******************************************************************************************/
