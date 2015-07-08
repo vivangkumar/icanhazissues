@@ -9,19 +9,23 @@ var pusher = new Pusher(pusherKey, {
   authEndpoint: '/pusher/auth'
 });
 
+var BLOCKED_LABEL = 'blocked';
+var DONE_LABEL = 'done';
+var READY_LABEL = 'ready';
+
 /**
  * Make cards movable and sortable
  * Also take specific actions when moving cards
  */
 function setupSortableCards() {
-  var issueGroups = document.getElementsByClassName('issue-list-group');
+  var issueGroups = $('.issue-list-group');
   var fromLabel = "";
   var toLabel = "";
   var fromMilestone = "";
   var toMilestone = "";
 
   for(var i = 0; i < issueGroups.length; i++) {
-    var issueMilestone = issueGroups[i].getAttribute('data-milestone');
+    var issueMilestone = $(issueGroups[i]).attr('data-milestone');
 
     /* Create sortable instance for each milestone, making them movable only
      * within each milestone
@@ -33,21 +37,21 @@ function setupSortableCards() {
       ghostClass: 'sortable-ghost',
       filter: '.done-bucket',
       onStart: function(event) {
-        var parentNode = event.item.parentNode;
-        fromLabel = parentNode.getAttribute('data-label');
-        fromMilestone = parentNode.getAttribute('data-milestone').replace(/ /g, '-');
+        var parentNode = $(event.item).parent();
+        fromLabel = parentNode.attr('data-label');
+        fromMilestone = parentNode.attr('data-milestone').replace(/ /g, '-');
       },
       onEnd: function(event) {
-        var issueNumber = event.item.getAttribute('data-issue-number');
-        var issueTitle = event.item.getElementsByTagName('a')[0].innerHTML;
-        var issueLink = event.item.getElementsByTagName('a')[0].href;
-        var parentNode = event.item.parentNode;
+        var issueNumber = $(event.item).attr('data-issue-number');
+        var issueTitle = $(event.item).find('a')[0].text;
+        var issueLink = $(event.item).find('a')[0].href;
+        var parentNode = $(event.item).parent();
         var blocked = false;
 
-        toLabel = parentNode.getAttribute('data-label');
-        toMilestone = parentNode.getAttribute('data-milestone').replace(/ /g, '-');
+        toLabel = parentNode.attr('data-label');
+        toMilestone = parentNode.attr('data-milestone').replace(/ /g, '-');
 
-        if (event.item.getAttribute('data-blocked') == 'true') {
+        if ($(event.item).attr('data-blocked') == 'true') {
           blocked = true;
         }
 
@@ -58,7 +62,7 @@ function setupSortableCards() {
           var fromCount = getCount(milestone, fromLabel);
           var toCount = getCount(milestone, toLabel);
 
-          if (toLabel == 'done') {
+          if (toLabel == DONE_LABEL) {
             hideOrShowDoneCard($(event.item));
           }
         }
@@ -74,15 +78,16 @@ function setupSortableCards() {
 function githubSync() {
   var channelName = repositoryName + '-' + ownerName + '-githubsync';
   var githubSyncChannel = pusher.subscribe(channelName);
+
   githubSyncChannel.bind('labeled', function(data) {
     var checkCard = selectCard(data);
     var label = data.label.name;
 
-    if (label == 'ready' && !checkCard.length) {
+    if (label == READY_LABEL && !checkCard.length) {
       addNewCard(data, label);
     }
 
-    if (label == 'blocked') {
+    if (label == BLOCKED_LABEL) {
       addBlockedLabelToCard(data);
     }
   });
@@ -90,42 +95,40 @@ function githubSync() {
   githubSyncChannel.bind('unlabeled', function(data) {
     var card = selectCard(data);
     var toLabel = "";
+
     if (data.issue.labels.length > 0) {
       toLabel = data.issue.labels[0].name;
     }
 
     var fromLabel = data.label.name;
     var milestone = getMilestoneName(data);
+    var fromCount = getCount(milestone, fromLabel);
 
     if (toLabel.length) {
-      removeCard(fromLabel, data.issue.number);
-      appendCard(milestone, toLabel, card);
-
-      var fromCount = getCount(milestone, fromLabel);
       var toCount = getCount(milestone, toLabel);
 
+      removeCard(fromLabel, data.issue.number);
+      appendCard(milestone, toLabel, card);
       updateIssueCount(milestone, toLabel, (toCount + 1));
       updateIssueCount(milestone, fromLabel, (fromCount - 1));
-
       switchLabels(card, fromLabel, toLabel);
       updateCardId(card, toLabel, data.issue.number);
 
-      if (toLabel == 'done') {
+      if (toLabel == DONE_LABEL) {
         updateDoneBadge(milestone, (toCount + 1));
         hideOrShowDoneCard(card);
       }
 
-      if (fromLabel == 'done') {
+      if (fromLabel == DONE_LABEL) {
         updateDoneBadge(milestone, (fromCount - 1));
         card.css('display', 'block');
       }
     } else {
-      var count = getCount(milestone, fromLabel);
-      updateIssueCount(milestone, fromLabel, (count - 1));
+      updateIssueCount(milestone, fromLabel, (fromCount - 1));
       card.remove();
     }
 
-    if (fromLabel == 'blocked') {
+    if (fromLabel == BLOCKED_LABEL) {
       removeBlockedLabelFromCard(data);
     }
   });
@@ -162,6 +165,7 @@ function assignIssue(data) {
                           '<img src="'+ data.issue.assignee.avatar_url + '&s=35' +'" class="img-circle avatar">' +
                         '</span>' +
                       '</div>';
+
   // Append only if the element does not already exist
   if (!card.find(".issue-assignee").length) {
     card.append(assigneeHtml);
