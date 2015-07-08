@@ -81,6 +81,10 @@ function githubSync() {
     if (label == 'ready' && !checkCard.length) {
       addNewCard(data, label);
     }
+
+    if (label == 'blocked') {
+      addBlockedLabelToCard(data);
+    }
   });
 
   githubSyncChannel.bind('unlabeled', function(data) {
@@ -119,6 +123,10 @@ function githubSync() {
       var count = getCount(milestone, fromLabel);
       updateIssueCount(milestone, fromLabel, (count - 1));
       card.remove();
+    }
+
+    if (fromLabel == 'blocked') {
+      removeBlockedLabelFromCard(data);
     }
   });
 
@@ -387,11 +395,28 @@ function assignColourCode() {
 /**
  * Look for issues that are blocked and add a label.
  */
-function addBlockedLabel() {
+function addBlockedLabels() {
   $('.issue-list-item[data-blocked="true"]').each(function() {
-    var label = '<span class="label label-danger">BLOCKED</span>'
+    var label = '<span class="label blocked-label label-danger">BLOCKED</span>'
     $(this).find('.issue-text').append("  " + label);
   });
+}
+
+/**
+ * Add a label to a card.
+ */
+function addBlockedLabelToCard(data) {
+  var card = selectCard(data);
+  var label = '<span class="label blocked-label label-danger">BLOCKED</span>';
+  $(card).find('.issue-text').append(" " + label);
+}
+
+/**
+ * Remove a blocked label.
+ */
+function removeBlockedLabelFromCard(data) {
+  var card = selectCard(data);
+  $(card).find('.blocked-label').remove();
 }
 
 /**
@@ -503,7 +528,7 @@ $(window).load(function() {
   addMenu();
   addNewIssueButton();
   assignColourCode();
-  addBlockedLabel();
+  addBlockedLabels();
   toggleDoneColumn();
   retainPreviousSetting();
   closeIssues();
