@@ -311,7 +311,13 @@ function getCount(milestone, label) {
  * Get normalised milestone name
  */
 function getMilestoneName(data) {
-  var milestone = data.issue.milestone || 'uncategorized';
+  var milestone = data.issue.milestone;
+  if (milestone) {
+    milestone = data.issue.milestone.title;
+  } else {
+    milestone = 'uncategorized';
+  }
+
   milestone.replace(/ /g, '-');
 
   return milestone;
