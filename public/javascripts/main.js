@@ -75,37 +75,68 @@ function githubSync() {
   var channelName = repositoryName + '-' + ownerName + '-githubsync';
   var githubSyncChannel = pusher.subscribe(channelName);
   githubSyncChannel.bind('labeled', function(data) {
-    console.log(data);
+    var label = data.label.name;
+    var milestone = getMilestoneName(data);
+    var checkCard = selectCard(data);
+    if (label == 'ready' && !checkCard.length) {
+      var card = $('.issue-list-item:first').clone();
+
+      $(card).attr('data-updated', data.issue.updated_at);
+      $(card).attr('data-issue-number', data.issue.number);
+      $(card).attr('id', label + '-' + data.issue.number);
+      $(card).removeAttr('class');
+      $(card).addClass('list-group-item').addClass('issue-list-item').addClass('issue-list-item-' + label);
+      var count = getCount(milestone, label);
+      updateIssueCount(milestone, label, (count + 1));
+      $(card).find(".issue-text").html(
+        '<a href="'+ data.issue.html_url +'" target="_blank">'+ data.issue.title +'</a>'
+      );
+
+      $(card).find(".issue-assignee").remove();
+      appendCard(milestone, label, card);
+
+      if (data.issue.assignee) {
+        assignIssue(data);
+      }
+    }
   });
 
   githubSyncChannel.bind('unlabeled', function(data) {
     var card = selectCard(data);
-    var toLabel = data.issue.labels[0].name;
-    var fromLabel = data.label.name;
-
-    var milestone = data.issue.milestone || 'uncategorized';
-    milestone.replace(/ /g, '-');
-
-    removeCard(fromLabel, data.issue.number);
-    appendCard(milestone, toLabel, card);
-
-    var fromCount = getCount(milestone, fromLabel);
-    var toCount = getCount(milestone, toLabel);
-
-    updateIssueCount(milestone, toLabel, (toCount + 1));
-    updateIssueCount(milestone, fromLabel, (fromCount - 1));
-
-    switchLabels(card, fromLabel, toLabel);
-    updateCardId(card, toLabel, data.issue.number);
-
-    if (toLabel == 'done') {
-      updateDoneBadge(milestone, (toCount + 1));
-      hideOrShowDoneCard(card);
+    var toLabel = "";
+    if (data.issue.labels.length > 0) {
+      toLabel = data.issue.labels[0].name;
     }
 
-    if (fromLabel == 'done') {
-      updateDoneBadge(milestone, (fromCount - 1));
-      card.css('display', 'block');
+    var fromLabel = data.label.name;
+    var milestone = getMilestoneName(data);
+
+    if (toLabel.length) {
+      removeCard(fromLabel, data.issue.number);
+      appendCard(milestone, toLabel, card);
+
+      var fromCount = getCount(milestone, fromLabel);
+      var toCount = getCount(milestone, toLabel);
+
+      updateIssueCount(milestone, toLabel, (toCount + 1));
+      updateIssueCount(milestone, fromLabel, (fromCount - 1));
+
+      switchLabels(card, fromLabel, toLabel);
+      updateCardId(card, toLabel, data.issue.number);
+
+      if (toLabel == 'done') {
+        updateDoneBadge(milestone, (toCount + 1));
+        hideOrShowDoneCard(card);
+      }
+
+      if (fromLabel == 'done') {
+        updateDoneBadge(milestone, (fromCount - 1));
+        card.css('display', 'block');
+      }
+    } else {
+      var count = getCount(milestone, fromLabel);
+      updateIssueCount(milestone, fromLabel, (count - 1));
+      card.remove();
     }
   });
 
@@ -115,10 +146,6 @@ function githubSync() {
 
   githubSyncChannel.bind('unassigned', function(data) {
     unassignIssue(data);
-  });
-
-  githubSyncChannel.bind('opened', function(data) {
-    console.log(data);
   });
 
   githubSyncChannel.bind('closed', function(data) {
@@ -167,8 +194,7 @@ function closeIssue(data) {
   var card = selectCard(data);
   card.remove();
 
-  var milestone = data.issue.milestone || 'uncategorized';
-  milestone.replace(/ /g, '-');
+  var milestone = getMilestoneName(data);
 
   var milestoneGroup = selectMilestone(data);
   var currentCardCount = milestoneGroup.attr('data-count');
@@ -268,6 +294,16 @@ function switchLabels(card, fromLabel, toLabel) {
  */
 function getCount(milestone, label) {
   return parseInt($('.' + milestone + '-' + label + '-list-group').attr('data-count'));
+}
+
+/**
+ * Get normalised milestone name
+ */
+function getMilestoneName(data) {
+  var milestone = data.issue.milestone || 'uncategorized';
+  milestone.replace(/ /g, '-');
+
+  return milestone;
 }
 
 /**
