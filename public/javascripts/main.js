@@ -75,29 +75,11 @@ function githubSync() {
   var channelName = repositoryName + '-' + ownerName + '-githubsync';
   var githubSyncChannel = pusher.subscribe(channelName);
   githubSyncChannel.bind('labeled', function(data) {
-    var label = data.label.name;
-    var milestone = getMilestoneName(data);
     var checkCard = selectCard(data);
+    var label = data.label.name;
+
     if (label == 'ready' && !checkCard.length) {
-      var card = $('.issue-list-item:first').clone();
-
-      $(card).attr('data-updated', data.issue.updated_at);
-      $(card).attr('data-issue-number', data.issue.number);
-      $(card).attr('id', label + '-' + data.issue.number);
-      $(card).removeAttr('class');
-      $(card).addClass('list-group-item').addClass('issue-list-item').addClass('issue-list-item-' + label);
-      var count = getCount(milestone, label);
-      updateIssueCount(milestone, label, (count + 1));
-      $(card).find(".issue-text").html(
-        '<a href="'+ data.issue.html_url +'" target="_blank">'+ data.issue.title +'</a>'
-      );
-
-      $(card).find(".issue-assignee").remove();
-      appendCard(milestone, label, card);
-
-      if (data.issue.assignee) {
-        assignIssue(data);
-      }
+      addNewCard(data, label);
     }
   });
 
@@ -153,7 +135,8 @@ function githubSync() {
   });
 
   githubSyncChannel.bind('reopened', function(data) {
-    console.log(data);
+    var label = data.issue.labels[0].name;
+    addNewCard(data, label);
   });
 }
 
@@ -200,6 +183,34 @@ function closeIssue(data) {
   var currentCardCount = milestoneGroup.attr('data-count');
   milestoneGroup.attr('data-count', (currentCardCount - 1));
   updateDoneBadge(milestone, (currentCardCount - 1));
+}
+
+/**
+ * Add new card based on the column.
+ */
+function addNewCard(data, label) {
+  var milestone = getMilestoneName(data);
+  var card = $('.issue-list-item:first').clone();
+
+  $(card).attr('data-updated', data.issue.updated_at);
+  $(card).attr('data-issue-number', data.issue.number);
+  $(card).attr('id', label + '-' + data.issue.number);
+  $(card).removeAttr('class');
+  $(card).addClass('list-group-item').addClass('issue-list-item').addClass('issue-list-item-' + label);
+
+  var count = getCount(milestone, label);
+  updateIssueCount(milestone, label, (count + 1));
+
+  $(card).find(".issue-text").html(
+    '<a href="'+ data.issue.html_url +'" target="_blank">'+ data.issue.title +'</a>'
+  );
+
+  $(card).find(".issue-assignee").remove();
+  appendCard(milestone, label, card);
+
+  if (data.issue.assignee) {
+    assignIssue(data);
+  }
 }
 
 /*******************************************************************************************/
