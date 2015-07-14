@@ -94,6 +94,7 @@ function githubSync() {
 
   githubSyncChannel.bind('unlabeled', function(data) {
     var card = selectCard(data);
+    console.log(card);
     var toLabel = "";
 
     if (data.issue.labels.length > 0) {
@@ -103,7 +104,7 @@ function githubSync() {
     var fromLabel = data.label.name;
     var milestone = getMilestoneName(data);
     var fromCount = getCount(milestone, fromLabel);
-
+    console.log(fromLabel, toLabel, milestone);
     if (toLabel.length) {
       var toCount = getCount(milestone, toLabel);
 
