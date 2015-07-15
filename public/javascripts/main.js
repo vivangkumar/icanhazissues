@@ -12,6 +12,11 @@ var pusher = new Pusher(pusherKey, {
 var BLOCKED_LABEL = 'blocked';
 var DONE_LABEL = 'done';
 var READY_LABEL = 'ready';
+var DEVELOPMENT_LABEL = 'development';
+var REVIEW_LABEL = 'review'
+var RELEASE_LABEL = 'release';
+
+var ALLOWED_LABELS = ['ready', 'development', 'review', 'release', 'done'];
 
 /**
  * Make cards movable and sortable
@@ -54,13 +59,12 @@ function setupSortableCards() {
         if ($(event.item).attr('data-blocked') == 'true') {
           blocked = true;
         }
+        console.log("from " + fromLabel);
+        console.log("to " + toLabel);
 
         if(fromLabel != toLabel && fromMilestone == toMilestone) {
           updateIssue(issueNumber, fromLabel, toLabel, blocked, issueTitle);
           var milestone = toMilestone;
-
-          var fromCount = getCount(milestone, fromLabel);
-          var toCount = getCount(milestone, toLabel);
 
           if (toLabel == DONE_LABEL) {
             hideOrShowDoneCard($(event.item));
@@ -80,15 +84,18 @@ function githubSync() {
   var githubSyncChannel = pusher.subscribe(channelName);
 
   githubSyncChannel.bind('labeled', function(data) {
-    var checkCard = selectCard(data);
     var label = data.label.name;
 
-    if (label == READY_LABEL && !checkCard.length) {
-      addNewCard(data, label);
+    addNewCard(data, label);
+
+    if (label == DONE_LABEL) {
+      hideOrShowDoneCard(selectCard(data));
     }
 
-    if (label == BLOCKED_LABEL) {
-      addBlockedLabelToCard(data);
+    for(var i = 0; i < data.issue.labels.length; i++) {
+      if (data.issue.labels[i].name == BLOCKED_LABEL) {
+        addBlockedLabelToCard(data);
+      }
     }
   });
 
@@ -108,11 +115,7 @@ function githubSync() {
       var toCount = getCount(milestone, toLabel);
 
       removeCard(fromLabel, data.issue.number);
-      appendCard(milestone, toLabel, card);
-      updateIssueCount(milestone, toLabel, (toCount + 1));
       updateIssueCount(milestone, fromLabel, (fromCount - 1));
-      switchLabels(card, fromLabel, toLabel);
-      updateCardId(card, toLabel, data.issue.number);
 
       if (toLabel == DONE_LABEL) {
         updateDoneBadge(milestone, (toCount + 1));
