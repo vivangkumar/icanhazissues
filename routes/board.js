@@ -6,6 +6,7 @@ var Set = Ds.Set;
 var util = require('../lib/util');
 
 var config = CONFIG;
+var memoryStore = MEMORY_STORE;
 
 /**
  * Categorize issues based on milestones and column names.
@@ -74,6 +75,8 @@ function _checkLabelMatches(issue, label) {
 }
 
 router.get('/:owner/:repo', util.isAuthenticated, function(req, res, next) {
+  memoryStore.set("wipLimit", CONFIG.wipLimit || 5);
+  console.log(memoryStore);
   var repoName = req.params.repo;
   var owner = req.params.owner;
   var repoURL = 'https://github.com/' + owner + '/' + repoName;
@@ -131,7 +134,8 @@ router.get('/:owner/:repo', util.isAuthenticated, function(req, res, next) {
         milestones: milestones,
         columns: config.boardColumns,
         pusherKey: config.pusherKey,
-        retrospectiveReminders: categorizedIssues.retrospectiveReminders
+        retrospectiveReminders: categorizedIssues.retrospectiveReminders,
+        wipLimit: memoryStore.get("wipLimit")
       });
     } else {
       res.render('error', {

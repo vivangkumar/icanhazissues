@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var session = require('cookie-session');
 var bodyParser = require('body-parser');
 var Pusher = require('pusher');
+var MemoryStore = require('./lib/memory-store');
 
 try {
   CONFIG = require('./config.json');
@@ -20,7 +21,8 @@ try {
     "pusherKey": process.env.PUSHER_KEY,
     "pusherSecret": process.env.PUSHER_SECRET,
     "eventinatorKey": process.env.EVENTINATOR_KEY,
-    "githubRedirectUri": process.env.GITHUB_OAUTH_REDIRECT_URI
+    "githubRedirectUri": process.env.GITHUB_OAUTH_REDIRECT_URI,
+    "wipLimit": process.env.WIP_LIMIT
   }
 }
 
@@ -29,6 +31,8 @@ PUSHER = new Pusher({
   key: CONFIG.pusherKey,
   secret: CONFIG.pusherSecret
 });
+
+MEMORY_STORE = new MemoryStore();
 
 var app = express();
 
