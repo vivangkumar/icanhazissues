@@ -115,10 +115,12 @@ function setupSortableCards() {
 
         if(fromLabel != toLabel && fromMilestone == toMilestone) {
           var toCount = parseInt(parentNode.getAttribute('data-count'));
-          parentNode.setAttribute('data-count', toCount + 1);
+          toCount += 1;
+          parentNode.setAttribute('data-count', toCount);
 
           var fromCount = parseInt(document.getElementsByClassName(fromMilestone + "-" + fromLabel + "-list-group")[0].getAttribute('data-count'));
-          updateIssueCount(fromMilestone, fromLabel, (fromCount - 1));
+          fromCount -= 1;
+          updateIssueCount(fromMilestone, fromLabel, fromCount);
 
           if (toLabel == 'done') {
             if (localStorage.doneColumn == 'false') {
@@ -132,6 +134,20 @@ function setupSortableCards() {
           if (fromLabel == 'done') {
             switchFromDoneLabel(event.item, toLabel);
             updateDoneBadge(fromMilestone, (fromCount - 1));
+          }
+
+          var toWipLimit = parseInt(parentNode.getAttribute('data-limit'));
+          if (toCount > toWipLimit) {
+            $('.heading-column:contains('+ toLabel +')').css('color', 'red');
+          }
+
+          var fromWipLimit = parseInt(document.getElementsByClassName(fromMilestone + "-" + fromLabel + "-list-group")[0].getAttribute('data-limit'));
+          if (fromCount <= fromWipLimit) {
+            var headingElement = $('.heading-column:contains('+ fromLabel +')');
+
+            if (headingElement.css('color') == "rgb(255, 0, 0)") {
+              headingElement.css('color', 'white');
+            }
           }
 
           updateCardId(event.item, toLabel, issueNumber);
