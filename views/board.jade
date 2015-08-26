@@ -57,7 +57,7 @@ block content
             div(class='panel board-panel panel-default')
               div(class='panel-heading board-panel-heading')
               div(class='panel-body board-panel-body')
-                ul(class='list-group issue-list-group #{dash(key)}-#{k}-list-group' data-count=v.length data-label='#{k}' data-milestone='#{key}')
+                ul(class='list-group issue-list-group #{dash(key)}-#{k}-list-group' data-limit='#{wipLimits[k]}' data-count=v.length data-label='#{k}' data-milestone='#{key}')
                   if (k == 'done')
                     block done-bucket
                   each i in v
@@ -70,4 +70,3 @@ block content
 
   script.
     var pusherKey = '#{pusherKey}';
-    var wipLimit = '#{wipLimit}';

@@ -75,8 +75,6 @@ function _checkLabelMatches(issue, label) {
 }
 
 router.get('/:owner/:repo', util.isAuthenticated, function(req, res, next) {
-  memoryStore.set("wipLimit", CONFIG.wipLimit || 5);
-  console.log(memoryStore);
   var repoName = req.params.repo;
   var owner = req.params.owner;
   var repoURL = 'https://github.com/' + owner + '/' + repoName;
@@ -135,7 +133,7 @@ router.get('/:owner/:repo', util.isAuthenticated, function(req, res, next) {
         columns: config.boardColumns,
         pusherKey: config.pusherKey,
         retrospectiveReminders: categorizedIssues.retrospectiveReminders,
-        wipLimit: memoryStore.get("wipLimit")
+        wipLimits: memoryStore.get("wipLimits")
       });
     } else {
       res.render('error', {
