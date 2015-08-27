@@ -32,6 +32,28 @@ function pusherSync() {
     updateIssueCount(toMilestone, toLabel, toCount);
     updateIssueCount(fromMilestone, fromLabel, fromCount);
 
+    var fromWipLimit = $('.issue-list-group[data-milestone=' + data.fromMilestone +']').attr('data-limit');
+    var toWipLimit = $('.issue-list-group[data-milestone=' + data.toMilestone +']').attr('data-limit');
+
+    var toCountSum = 0;
+    var fromCountSum = 0;
+
+    $(".issue-list-group[data-label="+ toLabel +"]").each(function() {
+      toCountSum += parseInt($(this).attr('data-count'));
+    });
+
+    $(".issue-list-group[data-label="+ fromLabel +"]").each(function() {
+      fromCountSum += parseInt($(this).attr('data-count'));
+    });
+
+    if (fromWipLimit <= fromCountSum) {
+      transitionHeader(fromLabel, 'white');
+    }
+
+    if (toCountSum > toWipLimit) {
+      transitionHeader(toLabel, 'red');
+    }
+
     if (toLabel == 'done') {
       updateDoneBadge(toMilestone, toCount);
 
@@ -115,11 +137,12 @@ function setupSortableCards() {
 
         if(fromLabel != toLabel && fromMilestone == toMilestone) {
           var toCount = parseInt(parentNode.getAttribute('data-count'));
+          var fromCount = parseInt(document.getElementsByClassName(fromMilestone + "-" + fromLabel + "-list-group")[0].getAttribute('data-count'));
           toCount += 1;
+          fromCount -= 1;
+
           parentNode.setAttribute('data-count', toCount);
 
-          var fromCount = parseInt(document.getElementsByClassName(fromMilestone + "-" + fromLabel + "-list-group")[0].getAttribute('data-count'));
-          fromCount -= 1;
           updateIssueCount(fromMilestone, fromLabel, fromCount);
 
           if (toLabel == 'done') {
@@ -127,38 +150,45 @@ function setupSortableCards() {
               hideDoneCard(event.item);
             }
 
-            updateDoneBadge(toMilestone, (toCount + 1));
+            updateDoneBadge(toMilestone, toCount);
             switchToDoneLabel(event.item, fromLabel);
           }
 
           if (fromLabel == 'done') {
             switchFromDoneLabel(event.item, toLabel);
-            updateDoneBadge(fromMilestone, (fromCount - 1));
+            updateDoneBadge(fromMilestone, fromCount);
           }
 
+          var toCountSum = 0;
+          var fromCountSum = 0;
+
+          $(".issue-list-group[data-label="+ toLabel +"]").each(function() {
+            toCountSum += parseInt($(this).attr('data-count'));
+          });
+
+          $(".issue-list-group[data-label="+ fromLabel +"]").each(function() {
+            fromCountSum += parseInt($(this).attr('data-count'));
+          });
+
           var toWipLimit = parseInt(parentNode.getAttribute('data-limit'));
-          if (toCount > toWipLimit) {
-            $('.heading-column:contains('+ toLabel +')').css('color', 'red');
+          if (toCountSum > toWipLimit) {
+            transitionHeader(toLabel, 'red');
           }
 
           var fromWipLimit = parseInt(document.getElementsByClassName(fromMilestone + "-" + fromLabel + "-list-group")[0].getAttribute('data-limit'));
-          if (fromCount <= fromWipLimit) {
-            var headingElement = $('.heading-column:contains('+ fromLabel +')');
-
-            if (headingElement.css('color') == "rgb(255, 0, 0)") {
-              headingElement.css('color', 'white');
-            }
+          if (fromCountSum <= fromWipLimit) {
+            transitionHeader(fromLabel, 'white');
           }
 
           updateCardId(event.item, toLabel, issueNumber);
 
           movedCard['cardHtml'] = event.item.outerHTML;
-          movedCard['fromCount'] = fromCount - 1;
-          movedCard['toCount'] = toCount + 1;
+          movedCard['fromCount'] = fromCount;
+          movedCard['toCount'] = toCount;
 
           // Trigger pusher event and update issue on github
           syncChannel.trigger('client-issue-updates', movedCard);
-          updateIssue(issueNumber, fromLabel, toLabel, blocked, issueTitle);
+          //updateIssue(issueNumber, fromLabel, toLabel, blocked, issueTitle);
         }
       }
     });
@@ -238,6 +268,11 @@ function switchToDoneLabel(card, label) {
 function switchFromDoneLabel(card, label) {
   $(card).removeClass('issue-list-item-done');
   $(card).addClass('issue-list-item-' + label);
+}
+
+function transitionHeader(label, colour) {
+  console.log(label, colour);
+  $('.heading-column:contains('+ label +')').css('color', colour);
 }
 
 /**
