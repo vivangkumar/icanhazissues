@@ -14,7 +14,7 @@ block card
 block done-bucket
   li(class='list-group-item done-bucket' draggable='false')
     div(class='bucket')
-      span(class='badge #{dash(key)}-done-badge') #{v.length}
+      span(class='done-badge badge #{dash(key)}-done-badge') #{v.length}
 
 block content
   - // Replace all spaces with a `-` when naming classes
@@ -41,7 +41,8 @@ block content
             | #{reminder}&nbsp;&bull;&nbsp;
       div(class='container-fluid heading-container')
         each col in columns
-          div(class='col-md-3 heading-column') #{col}
+          div(class='col-md-3 heading-column #{col}-heading') #{col}
+            span(class="badge limit-badge") #{wipLimits[col]}
 
   each val, key in issues
     div(class='container-fluid')

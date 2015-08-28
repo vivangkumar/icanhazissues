@@ -231,13 +231,18 @@ a:hover {
   font-size: 14px;
 }
 
-.badge {
+.done-badge {
   background-color: #E2E4E6;
   min-height: 50px;
   min-width: 50px;
   border-radius: 50%;
   font-size: 40px;
   color: #41A9BD;
+}
+
+.limit-badge {
+  background-color: #34495E;
+  color: #D64541;
 }
 
 .notifications {

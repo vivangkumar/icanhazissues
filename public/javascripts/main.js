@@ -32,8 +32,8 @@ function pusherSync() {
     updateIssueCount(toMilestone, toLabel, toCount);
     updateIssueCount(fromMilestone, fromLabel, fromCount);
 
-    var fromWipLimit = $('.issue-list-group[data-milestone=' + data.fromMilestone +']').attr('data-limit');
-    var toWipLimit = $('.issue-list-group[data-milestone=' + data.toMilestone +']').attr('data-limit');
+    var fromWipLimit = parseInt($('.issue-list-group[data-milestone=' + data.fromMilestone +']').attr('data-limit'));
+    var toWipLimit = parseInt($('.issue-list-group[data-milestone=' + data.toMilestone +']').attr('data-limit'));
 
     var toCountSum = 0;
     var fromCountSum = 0;
@@ -46,7 +46,7 @@ function pusherSync() {
       fromCountSum += parseInt($(this).attr('data-count'));
     });
 
-    if (fromWipLimit <= fromCountSum) {
+    if (fromCountSum <= fromWipLimit) {
       transitionHeader(fromLabel, 'white');
     }
 
@@ -171,6 +171,7 @@ function setupSortableCards() {
           });
 
           var toWipLimit = parseInt(parentNode.getAttribute('data-limit'));
+
           if (toCountSum > toWipLimit) {
             transitionHeader(toLabel, 'red');
           }
@@ -188,7 +189,7 @@ function setupSortableCards() {
 
           // Trigger pusher event and update issue on github
           syncChannel.trigger('client-issue-updates', movedCard);
-          //updateIssue(issueNumber, fromLabel, toLabel, blocked, issueTitle);
+          updateIssue(issueNumber, fromLabel, toLabel, blocked, issueTitle);
         }
       }
     });
@@ -271,8 +272,7 @@ function switchFromDoneLabel(card, label) {
 }
 
 function transitionHeader(label, colour) {
-  console.log(label, colour);
-  $('.heading-column:contains('+ label +')').css('color', colour);
+  $('.'+ label +'-heading').css('color', colour);
 }
 
 /**
@@ -439,6 +439,21 @@ function toggleDoneColumn() {
   });
 }
 
+function highlightHeadings() {
+  var labels = ["ready", "development", "review", "release", "done"];
+
+  labels.forEach(function(label, index, arr) {
+    var heading = $('.'+ label +'-heading');
+    var sum = 0;
+    $(".issue-list-group[data-label="+ label +"]").each(function() {
+      sum += parseInt($(this).attr('data-count'));
+      if (sum > parseInt($(this).attr('data-limit'))) {
+        heading.css('color', 'red');
+      }
+    });
+  });
+}
+
 /**
  * Toggle colour of the hide done column link
  * depending on the settings in localStorage
@@ -493,4 +508,5 @@ $(window).load(function() {
   setupNotification();
   closeIssues();
   $(".notifications").hide();
+  highlightHeadings();
 });

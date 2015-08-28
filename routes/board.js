@@ -6,7 +6,6 @@ var Set = Ds.Set;
 var util = require('../lib/util');
 
 var config = CONFIG;
-var memoryStore = MEMORY_STORE;
 
 /**
  * Categorize issues based on milestones and column names.
@@ -133,7 +132,7 @@ router.get('/:owner/:repo', util.isAuthenticated, function(req, res, next) {
         columns: config.boardColumns,
         pusherKey: config.pusherKey,
         retrospectiveReminders: categorizedIssues.retrospectiveReminders,
-        wipLimits: memoryStore.get("wipLimits")
+        wipLimits: config.wipLimits
       });
     } else {
       res.render('error', {

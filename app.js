@@ -23,11 +23,11 @@ try {
     "eventinatorKey": process.env.EVENTINATOR_KEY,
     "githubRedirectUri": process.env.GITHUB_OAUTH_REDIRECT_URI,
     "wipLimits": {
-      "ready": process.env.READY_WIP_LIMIT || 5,
-      "development": process.env.READY_WIP_LIMIT || 5,
-      "review": process.env.REVIEW_WIP_LIMIT || 5,
-      "release": process.env.RELEASE_WIP_LIMIT || 5,
-      "done": process.env.DONE_WIP_LIMIT || 5
+      "ready": process.env.READY_WIP_LIMIT || 3,
+      "development": process.env.DEVELOPMENT_WIP_LIMIT || 3,
+      "review": process.env.REVIEW_WIP_LIMIT || 3,
+      "release": process.env.RELEASE_WIP_LIMIT || 3,
+      "done": process.env.DONE_WIP_LIMIT || 3
     }
   }
 }
@@ -37,12 +37,6 @@ PUSHER = new Pusher({
   key: CONFIG.pusherKey,
   secret: CONFIG.pusherSecret
 });
-
-MEMORY_STORE = new MemoryStore();
-
-/** Initial wip limits **/
-
-MEMORY_STORE.set("wipLimits", CONFIG.wipLimits);
 
 var app = express();
 
