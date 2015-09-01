@@ -176,6 +176,10 @@ a:hover {
   text-decoration: none;
 }
 
+.menu-button {
+  color: white;
+}
+
 .board-panel {
   margin-bottom: 0px;
 }
@@ -242,7 +246,7 @@ a:hover {
 
 .limit-badge {
   background-color: #34495E;
-  color: #D64541;
+  color: #e74c3c;
 }
 
 .notifications {

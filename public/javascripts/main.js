@@ -32,8 +32,8 @@ function pusherSync() {
     updateIssueCount(toMilestone, toLabel, toCount);
     updateIssueCount(fromMilestone, fromLabel, fromCount);
 
-    var fromWipLimit = parseInt($('.issue-list-group[data-milestone=' + data.fromMilestone +']').attr('data-limit'));
-    var toWipLimit = parseInt($('.issue-list-group[data-milestone=' + data.toMilestone +']').attr('data-limit'));
+    var fromWipLimit = parseInt($('.'+ fromMilestone + '-' + fromLabel +  '-list-group').attr('data-limit'));
+    var toWipLimit = parseInt($('.'+ toMilestone + '-' + toLabel +  '-list-group').attr('data-limit'));
 
     var toCountSum = 0;
     var fromCountSum = 0;
@@ -51,7 +51,7 @@ function pusherSync() {
     }
 
     if (toCountSum > toWipLimit) {
-      transitionHeader(toLabel, 'red');
+      transitionHeader(toLabel, '#e74c3c');
     }
 
     if (toLabel == 'done') {
@@ -173,7 +173,7 @@ function setupSortableCards() {
           var toWipLimit = parseInt(parentNode.getAttribute('data-limit'));
 
           if (toCountSum > toWipLimit) {
-            transitionHeader(toLabel, 'red');
+            transitionHeader(toLabel, '#e74c3c');
           }
 
           var fromWipLimit = parseInt(document.getElementsByClassName(fromMilestone + "-" + fromLabel + "-list-group")[0].getAttribute('data-limit'));
@@ -448,7 +448,7 @@ function highlightHeadings() {
     $(".issue-list-group[data-label="+ label +"]").each(function() {
       sum += parseInt($(this).attr('data-count'));
       if (sum > parseInt($(this).attr('data-limit'))) {
-        heading.css('color', 'red');
+        heading.css('color', '#e74c3c');
       }
     });
   });

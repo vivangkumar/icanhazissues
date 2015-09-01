@@ -42,7 +42,8 @@ block content
       div(class='container-fluid heading-container')
         each col in columns
           div(class='col-md-3 heading-column #{col}-heading') #{col}
-            span(class="badge limit-badge") #{wipLimits[col]}
+            if wipLimits[col] < 10
+              span(class="badge limit-badge") #{wipLimits[col]}
 
   each val, key in issues
     div(class='container-fluid')
